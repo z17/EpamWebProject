@@ -1,5 +1,8 @@
 package servlets;
 
+import entity.User;
+import models.ModelUser;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +24,20 @@ public class LoginServlet extends HttpServlet{
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/main.jsp");
+
+        String submit = request.getParameter("submit");
+
+        if (submit != null) {
+            String login = request.getParameter("login");
+            String password = request.getParameter("password");
+            ModelUser model = new ModelUser();
+            User user = model.login(login, password);
+            if (user != null) {
+                System.out.println("yeaaa");
+            }
+        }
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/login.jsp");
         requestDispatcher.forward(request, response);
     }
 }

@@ -9,21 +9,7 @@
 </head>
 <body>
 <div class="wrapper">
-    <div class="header">
-        <div class="logo">
-            Ресторан
-        </div>
-        <div class="login-form">
-            <div class="login-title">
-                Форма входа
-            </div>
-            <form method="POST" action="/login">
-                <input type="text" name="login" placeholder="Логин" />
-                <input type="password" name="password" placeholder="Пароль" />
-                <input type="submit" />
-            </form>
-        </div>
-    </div>
+    <%@ include file="tmp/header.jsp" %>
     <div class="middle">
         <h1>Меню</h1>
         <div class="item">
@@ -51,9 +37,7 @@
             <div class="order js-order">Заказать</div>
         </div>
     </div>
-    <div class="footer">
-        <a href="/logout">Выход</a>
-    </div>
+    <%@ include file="tmp/footer.jsp" %>
 </div>
 </body>
 </html>

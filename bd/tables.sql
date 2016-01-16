@@ -1,16 +1,16 @@
-CREATE TABLE `groups` (
+CREATE TABLE `group` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-CREATE TABLE `users` (
+CREATE TABLE `user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `group_id` int(11) unsigned NOT NULL,  
   `login` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,  
-  FOREIGN KEY (group_id) REFERENCES groups(id),
+  FOREIGN KEY (group_id) REFERENCES `group`(id),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -20,7 +20,7 @@ CREATE TABLE `order` (
   `price` int(11) unsigned NOT NULL,  
   `status` int(11) unsigned NOT NULL,
   `time` datetime NOT NULL,  
-  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 

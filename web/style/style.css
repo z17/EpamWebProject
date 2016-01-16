@@ -1,0 +1,83 @@
+body {
+    background: #fff;
+    font-size: 14px;
+}
+
+
+h1, h2, h3, h4, h5 {
+    margin:0;
+}
+.wrapper {
+    width: 1000px;
+    margin: 0 auto;
+    background:#f1f1f1;
+}
+
+.header {
+    background: #f0f0f0;
+    padding: 20px;
+    height: 100px;
+    border-bottom: 1px solid #a6a7d4;
+}
+
+.header .logo {
+    float: left;
+    font-size:30px;
+    font-weight: bold;
+
+    margin: 20px 0 0 50px;
+}
+
+.header .login-form {
+    float:right;
+    margin: 10px 30px 0 0;
+    padding: 10px 20px;
+    border:1px solid #aaa;
+
+}
+
+.header .login-form .login-title {
+    font-weight: bold;
+}
+
+.header .login-form input {
+    margin: 10px 5px;
+    padding: 2px 5px;
+}
+
+.middle {
+    padding: 15px 15px;
+}
+
+.item {
+    margin: 10px 0 20px 0;
+    padding: 10px 5px;
+    border-bottom: 1px solid #000;
+}
+
+.item h2 {
+    margin: 0 0 10px 0;
+}
+
+.item .price {
+    margin: 5px 0 0 10px;
+    padding: 5px;
+    background: #fff;
+    display: inline-block;
+}
+
+.item .order {
+    margin: 5px 0 0 10px;
+    padding: 5px;
+    background: #fff;
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.footer {
+    background: #eaeaea;
+    padding: 10px 20px;
+    border-top: 1px solid #a6a7d4;
+}
+

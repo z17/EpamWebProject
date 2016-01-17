@@ -1,5 +1,8 @@
 package servlets;
 
+import entity.Item;
+import models.ModelItem;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @WebServlet("/index.jsp")
 public class MainServlet extends HttpServlet{
@@ -21,6 +25,11 @@ public class MainServlet extends HttpServlet{
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        ModelItem model = new ModelItem();
+        ArrayList<Item> menu = model.getMenu();
+        System.out.println(menu);
+        request.setAttribute("menu", menu);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/index.jsp");
         requestDispatcher.forward(request, response);
     }

@@ -2,10 +2,8 @@ package models;
 
 import dao.UserDao;
 import entity.User;
-import javafx.util.Pair;
 import models.messages.UserMessages;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 
 public class ModelUser {
@@ -35,6 +33,7 @@ public class ModelUser {
             return null;
         }
 
+        // todo:  зашифровать пароли
         if (!user.getPassword().equals(password)) {
             return null;
         }

@@ -15,6 +15,16 @@
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
         <h1>Корзина</h1>
+        <c:forEach var="entry" items="${currentOrder}">
+            <c:set var="item" value="${entry.key}" />
+            <div class="item" data-id="<c:out value="${item.getId()}"/>">
+                <h2><c:out value="${item.getName()}"/></h2>
+                <div class="price">
+                    Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+                </div>
+                <div class="count">Количество: <c:out value="${entry.value}"/></div>
+            </div>
+        </c:forEach>
         <h1>Предыдущие заказы</h1>
     </div>
     <%@ include file="tmp/footer.jsp" %>

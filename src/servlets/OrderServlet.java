@@ -1,5 +1,8 @@
 package servlets;
 
+import entity.Item;
+import models.ModelOrder;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 @WebServlet("/order")
 public class OrderServlet extends HttpServlet {
@@ -25,18 +30,20 @@ public class OrderServlet extends HttpServlet {
 
         Cookie[] cookies = request.getCookies();
         String orderStr = null;
-        System.out.println(cookies);
         if (cookies != null) {
             for (Cookie current : cookies) {
-                System.out.println(current.getName() + current.getValue());
                 if (current.getName().equals("order")) {
                     orderStr = current.getValue();
                     break;
                 }
             }
         }
-        Cookie c = new Cookie("test", "val");
-        response.addCookie(c);
+
+        ModelOrder model = new ModelOrder();
+        if (orderStr != null) {
+            Map<Item, Integer> items = model.getCurrentOrder(orderStr);
+            request.setAttribute("currentOrder", items);
+        }
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/order.jsp");
         requestDispatcher.forward(request, response);

@@ -28,7 +28,6 @@ public class MainServlet extends HttpServlet{
 
         ModelItem model = new ModelItem();
         ArrayList<Item> menu = model.getMenu();
-        System.out.println(menu);
         request.setAttribute("menu", menu);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/index.jsp");
         requestDispatcher.forward(request, response);

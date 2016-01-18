@@ -37,7 +37,8 @@ CREATE TABLE `item` (
 CREATE TABLE `order_item` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` int(11) unsigned NOT NULL,  
-  `item_id` int(11) unsigned NOT NULL,  
+  `item_id` int(11) unsigned NOT NULL,
+  `count` int(11) unsigned NOT NULL,
   FOREIGN KEY (order_id) REFERENCES `order`(id),
   FOREIGN KEY (item_id) REFERENCES `item`(id),
   PRIMARY KEY (`id`)

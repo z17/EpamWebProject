@@ -15,17 +15,40 @@
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
         <h1>Корзина</h1>
-        <c:forEach var="entry" items="${currentOrder}">
-            <c:set var="item" value="${entry.key}" />
-            <div class="item" data-id="<c:out value="${item.getId()}"/>">
-                <h2><c:out value="${item.getName()}"/></h2>
-                <div class="price">
-                    Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+        <c:set var="total" value="${0}"/>
+        <c:if test="${currentOrder != null}">
+            <c:forEach var="entry" items="${currentOrder}">
+                <c:set var="item" value="${entry.key}" />
+                <c:set var="total" value="${item.getPrice() * entry.value + total}"/>
+                <div class="item" data-id="<c:out value="${item.getId()}"/>">
+                    <h2><c:out value="${item.getName()}"/></h2>
+                    <div class="price">
+                        Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+                    </div>
+                    <div class="count">Количество: <c:out value="${entry.value}"/></div>
                 </div>
-                <div class="count">Количество: <c:out value="${entry.value}"/></div>
-            </div>
-        </c:forEach>
+            </c:forEach>
+            <form method="POST">
+                <p>Сумма заказа: <c:out value="${total}"/> р.</p>
+                <input type="submit" name="submit" value="Заказать" />
+            </form>
+        </c:if>
+        <c:if test="${currentOrder == null}">
+            <p>Ваша корзина пуста</p>
+        </c:if>
         <h1>Предыдущие заказы</h1>
+
+        <c:if test="${ordersList != null}">
+            <c:forEach var="order" items="${ordersList}">
+                <div class="order" data-id="<c:out value="${order.getId()}"/>">
+                    <p>Цена: <c:out value="${order.getPrice()}"/></p>
+                </div>
+            </c:forEach>
+        </c:if>
+        <c:if test="${ordersList == null}">
+            <p>Нет предыдущих заказов</p>
+        </c:if>
+
     </div>
     <%@ include file="tmp/footer.jsp" %>
 </div>

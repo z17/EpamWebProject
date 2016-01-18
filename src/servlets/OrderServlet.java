@@ -1,15 +1,15 @@
 package servlets;
 
 import entity.Item;
+import entity.Order;
+import entity.User;
 import models.ModelOrder;
+import models.ModelUser;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -30,19 +30,38 @@ public class OrderServlet extends HttpServlet {
 
         Cookie[] cookies = request.getCookies();
         String orderStr = null;
+        Cookie orderCookie = null;
         if (cookies != null) {
             for (Cookie current : cookies) {
                 if (current.getName().equals("order")) {
                     orderStr = current.getValue();
+                    orderCookie = current;
                     break;
                 }
             }
         }
 
         ModelOrder model = new ModelOrder();
+        Map<Item, Integer> items = null;
         if (orderStr != null) {
-            Map<Item, Integer> items = model.getCurrentOrder(orderStr);
+            items = model.getCurrentOrder(orderStr);
+        }
+
+        HttpSession session = request.getSession(true);
+
+        String submit = request.getParameter("submit");
+        User currentUser = (User)session.getAttribute("user");
+        if (submit != null && items != null) {
+            model.createOrder(currentUser, items);
+            orderCookie.setMaxAge(0);
+            response.addCookie(orderCookie);
+        } else {
             request.setAttribute("currentOrder", items);
+        }
+
+        if(currentUser != null) {
+            ArrayList<Order> ordersList = model.getUserOrders(currentUser);
+            request.setAttribute("ordersList", ordersList);
         }
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/order.jsp");

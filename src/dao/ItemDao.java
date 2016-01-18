@@ -36,7 +36,6 @@ public class ItemDao implements InterfaceDao<Item> {
 
         ArrayList<Integer> t = new ArrayList<>(ids);
         String idsStr = StringUtils.join(ids, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
-        System.out.println(idsStr);
         String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " WHERE id in ("+idsStr+")";
         System.out.println(select);
         ConnectionPool pool = ConnectionPool.getInstance();

@@ -1,8 +1,13 @@
 package models;
 
 import dao.ItemDao;
+import dao.OrderDao;
 import entity.Item;
+import entity.Order;
+import entity.OrderStatus;
+import entity.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,5 +40,20 @@ public class ModelOrder {
             result.put(id, value);
         }
         return result;
+    }
+
+    public void createOrder(User currentUser, Map<Item, Integer> items) {
+        OrderDao orderDao = new OrderDao();
+        int price = 0;
+        LocalDateTime time = LocalDateTime.now();
+        for (Map.Entry<Item, Integer> entry : items.entrySet()) {
+            price += entry.getKey().getPrice() * entry.getValue();
+        }
+        orderDao.create(new Order(currentUser.getId(), time, price, OrderStatus.NEW));
+    }
+
+    public ArrayList<Order> getUserOrders(User currentUser) {
+        OrderDao orderDao = new OrderDao();
+        return orderDao.getByUserId(currentUser.getId());
     }
 }

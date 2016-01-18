@@ -3,10 +3,7 @@ package dao;
 import cp.ConnectionPool;
 import entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class UserDao implements InterfaceDao<User> {
@@ -51,21 +48,29 @@ public class UserDao implements InterfaceDao<User> {
     }
 
     @Override
-    public void create(User item) {
+    public int create(User item) {
+        int newId = 0;
         String insert = "INSERT INTO " + TABLE_NAME + " (name, group_id, login, password) VALUES (?, ?, ?, ?)";
         System.out.println(insert);
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
-            PreparedStatement ps = connection.prepareStatement(insert)
+            PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
         ) {
             ps.setString(1, item.getName());
             ps.setInt(2, item.getGroupId());
             ps.setString(3, item.getLogin());
             ps.setString(4, item.getPassword());
             ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    newId = rs.getInt(1);
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return newId;
     }
 
     @Override

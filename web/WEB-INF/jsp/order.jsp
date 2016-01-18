@@ -1,4 +1,4 @@
-<%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -28,25 +28,34 @@
                     <div class="count">Количество: <c:out value="${entry.value}"/></div>
                 </div>
             </c:forEach>
-            <form method="POST">
-                <p>Сумма заказа: <c:out value="${total}"/> р.</p>
-                <input type="submit" name="submit" value="Заказать" />
-            </form>
+            <c:if test="${sessionScope.user != null}">
+                <form method="POST">
+                    <p>Сумма заказа: <c:out value="${total}"/> р.</p>
+                    <input type="submit" name="submit" value="Заказать" />
+                </form>
+            </c:if>
+            <c:if test="${sessionScope.user == null}">
+                <div class="login-order-form">
+                    <p>Для заказа нужно авторизоваться: </p>
+                    <%@ include file="tmp/login.jsp" %>
+                </div>
+            </c:if>
         </c:if>
         <c:if test="${currentOrder == null}">
             <p>Ваша корзина пуста</p>
         </c:if>
-        <h1>Предыдущие заказы</h1>
-
-        <c:if test="${ordersList != null}">
-            <c:forEach var="order" items="${ordersList}">
-                <div class="order" data-id="<c:out value="${order.getId()}"/>">
-                    <p>Цена: <c:out value="${order.getPrice()}"/></p>
-                </div>
-            </c:forEach>
-        </c:if>
-        <c:if test="${ordersList == null}">
-            <p>Нет предыдущих заказов</p>
+        <c:if test="${sessionScope.user != null}">
+            <h1>Предыдущие заказы</h1>
+            <c:if test="${ordersList != null}">
+                <c:forEach var="order" items="${ordersList}">
+                    <div class="order" data-id="<c:out value="${order.getId()}"/>">
+                        <p>Цена: <c:out value="${order.getPrice()}"/></p>
+                    </div>
+                </c:forEach>
+            </c:if>
+            <c:if test="${ordersList == null}">
+                <p>Нет предыдущих заказов</p>
+            </c:if>
         </c:if>
 
     </div>

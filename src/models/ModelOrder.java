@@ -2,10 +2,8 @@ package models;
 
 import dao.ItemDao;
 import dao.OrderDao;
-import entity.Item;
-import entity.Order;
-import entity.OrderStatus;
-import entity.User;
+import dao.OrderItemDao;
+import entity.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,7 +47,12 @@ public class ModelOrder {
         for (Map.Entry<Item, Integer> entry : items.entrySet()) {
             price += entry.getKey().getPrice() * entry.getValue();
         }
-        orderDao.create(new Order(currentUser.getId(), time, price, OrderStatus.NEW));
+        int orderId = orderDao.create(new Order(currentUser.getId(), time, price, OrderStatus.NEW));
+
+        OrderItemDao orderItemDao = new OrderItemDao();
+        for (Map.Entry<Item, Integer> entry : items.entrySet()) {
+            orderItemDao.create(new OrderItem(orderId, entry.getKey().getId(), entry.getValue()));
+        }
     }
 
     public ArrayList<Order> getUserOrders(User currentUser) {

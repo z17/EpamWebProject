@@ -25,11 +25,11 @@ public class MainServlet extends HttpServlet{
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
         ModelItem model = new ModelItem();
         ArrayList<Item> menu = model.getMenu();
         request.setAttribute("menu", menu);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/index.jsp");
+
         requestDispatcher.forward(request, response);
     }
 }

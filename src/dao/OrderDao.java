@@ -21,20 +21,30 @@ public class OrderDao implements InterfaceDao<Order> {
     }
 
     @Override
-    public void create(Order item) {
+    public int create(Order item) {
         String insert = "INSERT INTO " + TABLE_NAME + " (user_id, price, status, time) VALUES (?, ?, ?, ?)";
+        int newId = 0;
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
-            PreparedStatement ps = connection.prepareStatement(insert)
+            PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
         ) {
             ps.setInt(1, item.getUserId());
             ps.setInt(2, item.getPrice());
             ps.setInt(3, item.getStatus().getValue());
             ps.setTimestamp(4, Timestamp.valueOf(item.getTime()));
             ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    newId = rs.getInt(1);
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return newId;
     }
 
     @Override

@@ -34,8 +34,18 @@ public class LoginServlet extends HttpServlet{
             String password = request.getParameter("password");
             ModelUser model = new ModelUser();
             User user = model.login(login, password);
+
+            String url = request.getParameter("url");
             if (user != null) {
                 session.setAttribute("user", user);
+                request.setAttribute("successLogin", true);
+                // если юзер авторизуется с любой другой страницы - туда его и возвращаем
+                if (!url.equals("/login")) {
+                    response.sendRedirect(url);
+                    return;
+                }
+            } else {
+                request.setAttribute("successLogin", false);
             }
         }
 

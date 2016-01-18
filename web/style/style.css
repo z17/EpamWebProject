@@ -37,14 +37,28 @@ h2 {
     margin: 10px 30px 0 0;
     padding: 10px 20px;
     border:1px solid #aaa;
+    position: relative;
 
 }
+.login-order-form {
+    margin: 15px 0;
+    padding: 10px 20px;
+    border:1px solid #aaa;
+    position: relative;
 
-.header .login-header-form .login-title {
+}
+.header .login-header-form .login-title, .login-order-form .login-title{
     font-weight: bold;
 }
 
-.header .login-form input {
+.login-header-form .signup-link {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+}
+
+
+.header .login-header-form input, .login-order-form input {
     margin: 10px 5px;
     padding: 2px 5px;
 }
@@ -114,4 +128,13 @@ form.signup input {
 .login-page form.login-page {
     margin: 10px 0;
     display: block;
+}
+.login-page .login-title {
+    font-size: 20px;
+    margin: 15px 0;
+}
+
+.login-page form.login-form input{
+    display: block;
+    margin: 10px 0;
 }

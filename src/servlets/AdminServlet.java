@@ -1,5 +1,8 @@
 package servlets;
 
+import entity.Order;
+import models.ModelOrder;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
@@ -21,7 +25,12 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/main.jsp");
+
+        ModelOrder model = new ModelOrder();
+        ArrayList<Order> ordersList = model.getActiveOrders();
+        request.setAttribute("ordersList", ordersList);
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/admin.jsp");
         requestDispatcher.forward(request, response);
     }
 }

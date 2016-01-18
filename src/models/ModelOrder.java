@@ -6,9 +6,7 @@ import dao.OrderItemDao;
 import entity.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,5 +56,14 @@ public class ModelOrder {
     public ArrayList<Order> getUserOrders(User currentUser) {
         OrderDao orderDao = new OrderDao();
         return orderDao.getByUserId(currentUser.getId());
+    }
+
+    public ArrayList<Order> getActiveOrders() {
+        OrderDao orderDao = new OrderDao();
+        Collection<OrderStatus> listStatus = new ArrayList<>();
+        listStatus.add(OrderStatus.NEW);
+        listStatus.add(OrderStatus.EXECUTED);
+        listStatus.add(OrderStatus.READY);
+        return orderDao.getOrderByStatusArray(listStatus);
     }
 }

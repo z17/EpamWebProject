@@ -3,10 +3,13 @@ package dao;
 import cp.ConnectionPool;
 import entity.Order;
 import entity.OrderStatus;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class OrderDao implements InterfaceDao<Order> {
     private static String TABLE_NAME = "`order`";
@@ -69,20 +72,47 @@ public class OrderDao implements InterfaceDao<Order> {
              )
         ){
             ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                result = new ArrayList<>();
-                while (rs.next()) {
-                    int orderId = rs.getInt("id");
-                    int userId = rs.getInt("user_Id");
-                    int price = rs.getInt("price");
-                    int status = rs.getInt("status");
-                    LocalDateTime time = rs.getTimestamp("time").toLocalDateTime();
-                    result.add(new Order(orderId, userId, time, price, OrderStatus.valueOf(status)));
-                }
-            }
+            result = getOrders(ps);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    public ArrayList<Order> getOrderByStatusArray(Collection<OrderStatus> listStatus) {
+        ArrayList<Integer> listStatusId = new ArrayList<>();
+        listStatus.stream().forEach((item) -> listStatusId.add(item.getValue()));
+        String statusStr = StringUtils.join(listStatusId, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
+        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE status in ("+statusStr+")";
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        ArrayList<Order> result =  null;
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ){
+            result = getOrders(ps);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private ArrayList<Order> getOrders(PreparedStatement ps) throws SQLException {
+        ArrayList<Order> result = null;
+        try (ResultSet rs = ps.executeQuery()) {
+            result = new ArrayList<>();
+            while (rs.next()) {
+                int orderId = rs.getInt("id");
+                int userId = rs.getInt("user_Id");
+                int price = rs.getInt("price");
+                int status = rs.getInt("status");
+                LocalDateTime time = rs.getTimestamp("time").toLocalDateTime();
+                result.add(new Order(orderId, userId, time, price, OrderStatus.valueOf(status)));
+            }
         }
         return result;
     }

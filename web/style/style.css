@@ -138,3 +138,13 @@ form.signup input {
     display: block;
     margin: 10px 0;
 }
+
+
+.order {
+    margin: 0;
+    padding: 10px 5px;
+    border-bottom: 1px solid #aaa;
+}
+.order p {
+    margin: 5px 0;
+}

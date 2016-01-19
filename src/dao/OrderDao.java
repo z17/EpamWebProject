@@ -20,7 +20,22 @@ public class OrderDao implements InterfaceDao<Order> {
 
     @Override
     public Order getById(int id) {
-        return null;
+        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE id = ? LIMIT 1";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Order result =  null;
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ){
+            ps.setInt(1, id);
+            result = getOrders(ps).get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override
@@ -102,7 +117,7 @@ public class OrderDao implements InterfaceDao<Order> {
     }
 
     private ArrayList<Order> getOrders(PreparedStatement ps) throws SQLException {
-        ArrayList<Order> result = null;
+        ArrayList<Order> result;
         try (ResultSet rs = ps.executeQuery()) {
             result = new ArrayList<>();
             while (rs.next()) {

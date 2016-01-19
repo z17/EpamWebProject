@@ -66,4 +66,23 @@ public class ModelOrder {
         listStatus.add(OrderStatus.READY);
         return orderDao.getOrderByStatusArray(listStatus);
     }
+
+    public int getOrderIdFromUrl(String requestURI) {
+        String[] path = requestURI.split("/");
+        if (path.length >= 3) {
+            if (path[1].equals("order")) {
+                try {
+                    return Integer.parseInt(path[2]);
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public Order getOrderById(int orderId) {
+        OrderDao dao = new OrderDao();
+        return dao.getById(orderId);
+    }
 }

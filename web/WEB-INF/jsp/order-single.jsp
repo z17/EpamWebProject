@@ -19,6 +19,17 @@
             <p>Дата: <c:out value="${order.getTime()}"/></p>
             <p>Цена: <c:out value="${order.getPrice()}"/></p>
             <p>Статус: <c:out value="${order.getStatus()}"/></p>
+            <c:forEach var="item" items="${order.getItems()}">
+                <div class="item" data-id="<c:out value="${item.getId()}"/>">
+                    <h2><c:out value="${item.getName()}"/></h2>
+                    <div class="description">
+                        <img src="<c:out value="${item.getImage()}"/>" class="item-image"/>
+                        <c:out value="${item.getDescription()}"/></div>
+                    <div class="price">
+                        Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+                    </div>
+                </div>
+            </c:forEach>
         </div>
     </div>
     <%@ include file="tmp/footer.jsp" %>

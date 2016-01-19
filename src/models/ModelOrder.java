@@ -1,5 +1,6 @@
 package models;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import dao.ItemDao;
 import dao.OrderDao;
 import dao.OrderItemDao;
@@ -14,9 +15,9 @@ public class ModelOrder {
     public Map<Item, Integer> getCurrentOrder(String orderCookieValue) {
         HashMap<Integer, Integer> itemsId = parseOrderCookie(orderCookieValue);
         ItemDao itemDao = new ItemDao();
-        ArrayList<Item> items = itemDao.getByArrayId(itemsId.keySet());
+        Map<Integer, Item> items = itemDao.getByArrayId(itemsId.keySet());
         Map<Item, Integer> result = new HashMap<>();
-        for (Item item : items) {
+        for (Item item : items.values()) {
             result.put(item, itemsId.get(item.getId()));
         }
         return result;
@@ -84,5 +85,20 @@ public class ModelOrder {
     public Order getOrderById(int orderId) {
         OrderDao dao = new OrderDao();
         return dao.getById(orderId);
+    }
+
+    public boolean isAdminAccessAllowed(User user) {
+        if (user == null) {
+            return false;
+        }
+        // todo: вынести отдельно проверку прав, а не так хардкорить
+        return user.getGroupId() == 2;
+    }
+
+    public boolean isOrderAccessAllowed(Order order, User user) {
+        if (order == null || user == null) {
+            return false;
+        }
+        return order.getUserId() == user.getId() || isAdminAccessAllowed(user);
     }
 }

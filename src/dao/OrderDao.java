@@ -1,7 +1,9 @@
 package dao;
 
 import cp.ConnectionPool;
+import entity.Item;
 import entity.Order;
+import entity.OrderItem;
 import entity.OrderStatus;
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,12 +11,12 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 public class OrderDao implements InterfaceDao<Order> {
     private static String TABLE_NAME = "`order`";
     @Override
-    public ArrayList<Order> get() {
+    public Map<Integer, Order> get() {
         return null;
     }
 
@@ -31,7 +33,10 @@ public class OrderDao implements InterfaceDao<Order> {
              )
         ){
             ps.setInt(1, id);
-            result = getOrders(ps).get(0);
+            ArrayList<Order> orders = getOrders(ps);
+            if (orders.size() > 0) {
+                result = orders.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,9 +122,8 @@ public class OrderDao implements InterfaceDao<Order> {
     }
 
     private ArrayList<Order> getOrders(PreparedStatement ps) throws SQLException {
-        ArrayList<Order> result;
+        ArrayList<Order> result = new ArrayList<>();
         try (ResultSet rs = ps.executeQuery()) {
-            result = new ArrayList<>();
             while (rs.next()) {
                 int orderId = rs.getInt("id");
                 int userId = rs.getInt("user_Id");
@@ -127,6 +131,17 @@ public class OrderDao implements InterfaceDao<Order> {
                 int status = rs.getInt("status");
                 LocalDateTime time = rs.getTimestamp("time").toLocalDateTime();
                 result.add(new Order(orderId, userId, time, price, OrderStatus.valueOf(status)));
+            }
+        }
+
+        for (Order one : result) {
+            OrderItemDao dao = new OrderItemDao();
+            ArrayList<OrderItem> orderItems = dao.getByOrderId(one.getId());
+
+            ItemDao itemDao = new ItemDao();
+            Map<Integer, Item> list = itemDao.get();
+            for (OrderItem currentOrderItem: orderItems) {
+                one.addItem(list.get(currentOrderItem.getIdItem()));
             }
         }
         return result;

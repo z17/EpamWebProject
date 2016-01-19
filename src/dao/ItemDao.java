@@ -6,15 +6,26 @@ import entity.Item;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ItemDao implements InterfaceDao<Item> {
-    static String TABLE_NAME = "item";
+    // кешируем т.к. item нам нужны постоянно.
+    private static Map<Integer, Item> allItems = null;
+    private static String TABLE_NAME = "item";
 
     @Override
-    public ArrayList<Item> get() {
-        ArrayList<Item> result = new ArrayList<>();
+    public Map<Integer, Item> get() {
+        if (allItems != null) {
+            synchronized (ItemDao.class) {
+                if (allItems != null) {
+                    return allItems;
+                }
+            }
+        }
+
+        Map<Integer, Item> result = new HashMap<>();
         String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME;
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
@@ -28,11 +39,12 @@ public class ItemDao implements InterfaceDao<Item> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        allItems = result;
         return result;
     }
 
-    public ArrayList<Item> getByArrayId(Collection<Integer> ids) {
-        ArrayList<Item> result = new ArrayList<>();
+    public Map<Integer, Item> getByArrayId(Collection<Integer> ids) {
+        Map<Integer, Item> result = null;
 
         String idsStr = StringUtils.join(ids, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
         String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " WHERE id in ("+idsStr+")";
@@ -51,8 +63,8 @@ public class ItemDao implements InterfaceDao<Item> {
         return result;
     }
 
-    private ArrayList<Item> getItemsList(PreparedStatement ps) throws SQLException {
-        ArrayList<Item> result = new ArrayList<>();
+    private Map<Integer, Item> getItemsList(PreparedStatement ps) throws SQLException {
+        Map<Integer, Item> result = new HashMap<>();
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -61,7 +73,7 @@ public class ItemDao implements InterfaceDao<Item> {
                 int price = rs.getInt("price");
                 String description = rs.getString("description");
                 String image = rs.getString("image");
-                result.add(new Item(id, name, inStock, price, description, image));
+                result.put(id, new Item(id, name, inStock, price, description, image));
             }
         }
         return result;
@@ -74,16 +86,19 @@ public class ItemDao implements InterfaceDao<Item> {
 
     @Override
     public int create(Item item) {
+        allItems = null;
         return 0;
     }
 
     @Override
     public void update(Item item) {
+        allItems = null;
 
     }
 
     @Override
     public void delete(int id) {
+        allItems = null;
 
     }
 }

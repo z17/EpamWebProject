@@ -1,9 +1,9 @@
 package dao;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 public interface InterfaceDao<T> {
-    ArrayList<T> get();
+    Map<Integer, T> get();
     T getById(int id);
     int create(T item);
     void update(T item);

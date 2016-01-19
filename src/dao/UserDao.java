@@ -5,12 +5,13 @@ import entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class UserDao implements InterfaceDao<User> {
     static String TABLE_NAME = "user";
 
     @Override
-    public ArrayList<User> get() {
+    public Map<Integer, User> get() {
         return null;
     }
 

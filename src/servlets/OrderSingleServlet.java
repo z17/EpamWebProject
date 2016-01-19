@@ -1,6 +1,7 @@
 package servlets;
 
 import entity.Order;
+import entity.User;
 import models.ModelOrder;
 
 import javax.servlet.RequestDispatcher;
@@ -26,9 +27,23 @@ public class OrderSingleServlet extends HttpServlet {
         ModelOrder model = new ModelOrder();
         int orderId = model.getOrderIdFromUrl(request.getRequestURI());
 
+        Order order = null;
         if (orderId > 0) {
-            Order order = model.getOrderById(orderId);
+            order = model.getOrderById(orderId);
             request.setAttribute("order", order);
+        }
+
+        if (order == null) {
+            response.sendRedirect("/error-404");
+            return;
+        }
+
+        HttpSession session = request.getSession(true);
+        User user = (User)session.getAttribute("user");
+        if (!model.isOrderAccessAllowed(order, user)) {
+            response.sendRedirect("/error-access");
+            return;
+
         }
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/order-single.jsp");

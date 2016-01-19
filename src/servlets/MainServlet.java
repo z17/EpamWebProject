@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 @WebServlet("/index.jsp")
 public class MainServlet extends HttpServlet{
@@ -26,7 +27,7 @@ public class MainServlet extends HttpServlet{
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ModelItem model = new ModelItem();
-        ArrayList<Item> menu = model.getMenu();
+        Collection<Item> menu = model.getMenu().values();
         request.setAttribute("menu", menu);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/index.jsp");
 

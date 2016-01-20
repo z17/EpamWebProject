@@ -49,8 +49,9 @@
             <c:if test="${ordersList != null}">
                 <c:forEach var="order" items="${ordersList}">
                     <div class="order" data-id="<c:out value="${order.getId()}"/>">
+                        <h3>Заказ №<c:out value="${order.getId()}"/></h3>
                         <p>Дата: <c:out value="${order.getTime()}"/></p>
-                        <p>Цена: <c:out value="${order.getPrice()}"/></p>
+                        <p>Цена: <c:out value="${order.getPrice()}"/> р.</p>
                         <p>Статус: <c:out value="${order.getStatus()}"/></p>
                         <p><a href="/order/<c:out value="${order.getId()}"/>">Подробнее</a> </p>
                     </div>

@@ -3,17 +3,42 @@ package models;
 import dao.UserDao;
 import entity.User;
 import models.messages.UserMessages;
+import settings.ProjectSetting;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class ModelUser {
-    static int PASSWORD_LENGTH_MIN = 5;
-    static int PASSWORD_LENGTH_MAX = 15;
-    static int DEFAULT_GROUP_ID = 1;
+    private static int PASSWORD_LENGTH_MIN = 5;
+    private static int PASSWORD_LENGTH_MAX = 15;
+    private static int DEFAULT_GROUP_ID = 1;
+    private static String SETTINGS_SALT = "auth.salt";
+
+    private String encryptPassword(String password) {
+        try {
+            ProjectSetting setting = ProjectSetting.getInstance();
+            password = password + setting.getValue(SETTINGS_SALT);
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password.getBytes("UTF-8")); // Change this to "UTF-16" if neede
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte aDigest : digest) {
+                sb.append(Integer.toHexString(0xff & aDigest));
+            }
+            return sb.toString();
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        // todo обработать ситуацию, когда пароль не зашифрован
+        return null;
+    }
 
     public ArrayList<UserMessages> createUser(String name, String login, String password) {
         ArrayList<UserMessages> validate = validateUserData(name, login, password);
         if (validate.get(0) == UserMessages.CORRECT_SIGNUP) {
+            password = encryptPassword(password);
             User user = new User(name, DEFAULT_GROUP_ID, login, password);
             UserDao dao = new UserDao();
             dao.create(user);
@@ -33,7 +58,7 @@ public class ModelUser {
             return null;
         }
 
-        // todo:  зашифровать пароли
+        password = encryptPassword(password);
         if (!user.getPassword().equals(password)) {
             return null;
         }

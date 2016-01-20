@@ -28,6 +28,9 @@
                 <div class="order js-order">Заказать</div>
             </div>
         </c:forEach>
+        <c:if test="${menu == null || menu.size() == 0}">
+            <p>Не найдено</p>
+        </c:if>
 
     </div>
     <%@ include file="tmp/footer.jsp" %>

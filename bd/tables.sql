@@ -43,3 +43,12 @@ CREATE TABLE `order_item` (
   FOREIGN KEY (item_id) REFERENCES `item`(id),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE `bill` (
+  `id`       int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) UNSIGNED NOT NULL,
+  `paid`     BOOLEAN          NOT NULL DEFAULT false,
+  `sum`     int(11) UNSIGNED NOT NULL,
+  FOREIGN KEY (`order_id`) REFERENCES `order`(id),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

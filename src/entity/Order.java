@@ -2,6 +2,8 @@ package entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Order {
     private int id;
@@ -9,14 +11,14 @@ public class Order {
     private LocalDateTime time;
     private int price;
     private OrderStatus status;
-    private ArrayList<Item> items;
+    private Map<Item, Integer> items;
 
     public Order(int userId, LocalDateTime time, int price, OrderStatus status) {
         this.userId = userId;
         this.time = time;
         this.price = price;
         this.status = status;
-        this.items = new ArrayList<>();
+        this.items = new HashMap<>();
     }
 
     public Order(int id, int userId, LocalDateTime time, int price, OrderStatus status) {
@@ -25,7 +27,7 @@ public class Order {
         this.time = time;
         this.price = price;
         this.status = status;
-        this.items = new ArrayList<>();
+        this.items = new HashMap<>();
     }
 
     public int getId() {
@@ -48,15 +50,19 @@ public class Order {
         return status;
     }
 
-    public ArrayList<Item> getItems() {
+    public Map<Item, Integer> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<Item> items) {
+    public void setItems(Map<Item, Integer> items) {
         this.items = items;
     }
 
-    public void addItem(Item item) {
-        items.add(item);
+    public void addItem(Integer count, Item item) {
+        items.put(item, count);
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

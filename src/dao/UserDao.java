@@ -52,7 +52,6 @@ public class UserDao implements InterfaceDao<User> {
     public int create(User item) {
         int newId = 0;
         String insert = "INSERT INTO " + TABLE_NAME + " (name, group_id, login, password) VALUES (?, ?, ?, ?)";
-        System.out.println(insert);
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
             PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)

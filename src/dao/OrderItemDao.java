@@ -54,7 +54,7 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
     }
 
     public ArrayList<OrderItem> getByOrderId(int orderId) {
-        String select = "SELECT id, item_id, count FROM order_item WHERE order_id = ?";
+        String select = "SELECT id, item_id, count FROM " + TABLE_NAME + " WHERE order_id = ?";
         ArrayList<OrderItem> result = null;
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
@@ -79,5 +79,19 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void deleteByOrderId(int orderId) {
+        String delete = "DELETE FROM " + TABLE_NAME + " WHERE order_id = ?";
+        ConnectionPool pool = ConnectionPool.getInstance();
+
+        try(Connection connection = pool.takeConnection();
+            PreparedStatement ps = connection.prepareStatement(delete)
+        ) {
+            ps.setInt(1, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

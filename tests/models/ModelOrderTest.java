@@ -1,3 +1,5 @@
+package models;
+
 import models.ModelOrder;
 import org.junit.Test;
 

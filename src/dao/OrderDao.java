@@ -72,12 +72,41 @@ public class OrderDao implements InterfaceDao<Order> {
 
     @Override
     public void update(Order item) {
+        String update = "UPDATE "+TABLE_NAME+" set user_id = ?, price = ?, status = ?, time = ? WHERE id = ?";
 
+        ConnectionPool pool = ConnectionPool.getInstance();
+        try(Connection connection = pool.takeConnection();
+            PreparedStatement ps = connection.prepareStatement(update)
+        ) {
+            ps.setInt(1, item.getUserId());
+            ps.setInt(2, item.getPrice());
+            ps.setInt(3, item.getStatus().getValue());
+            ps.setTimestamp(4, Timestamp.valueOf(item.getTime()));
+            ps.setInt(5, item.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(int id) {
+        // удаляем связи
+        OrderItemDao dao = new OrderItemDao();
+        dao.deleteByOrderId(id);
 
+        // удаляем сам заказ
+        String delete = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+        ConnectionPool pool = ConnectionPool.getInstance();
+
+        try(Connection connection = pool.takeConnection();
+            PreparedStatement ps = connection.prepareStatement(delete)
+        ) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Order> getByUserId(int id) {
@@ -141,7 +170,7 @@ public class OrderDao implements InterfaceDao<Order> {
             ItemDao itemDao = new ItemDao();
             Map<Integer, Item> list = itemDao.get();
             for (OrderItem currentOrderItem: orderItems) {
-                one.addItem(list.get(currentOrderItem.getIdItem()));
+                one.addItem(currentOrderItem.getCount(), list.get(currentOrderItem.getIdItem()));
             }
         }
         return result;

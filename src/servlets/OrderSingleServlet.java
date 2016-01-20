@@ -1,5 +1,7 @@
 package servlets;
 
+import dao.BillDao;
+import entity.Bill;
 import entity.Order;
 import entity.User;
 import models.ModelOrder;
@@ -27,10 +29,12 @@ public class OrderSingleServlet extends HttpServlet {
         ModelOrder model = new ModelOrder();
         int orderId = model.getOrderIdFromUrl(request.getRequestURI());
 
+        HttpSession session = request.getSession(true);
+        User user = (User)session.getAttribute("user");
+
         Order order = null;
         if (orderId > 0) {
             order = model.getOrderById(orderId);
-            request.setAttribute("order", order);
         }
 
         if (order == null) {
@@ -38,13 +42,24 @@ public class OrderSingleServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession(true);
-        User user = (User)session.getAttribute("user");
         if (!model.isOrderAccessAllowed(order, user)) {
             response.sendRedirect("/error-access");
             return;
-
         }
+
+        String action = request.getParameter("action");
+        if (action != null) {
+            order = model.doAction(action, user, order);
+        }
+
+        if (order != null) {
+            BillDao billDao = new BillDao();
+            Bill bill = billDao.getByOrderId(order.getId());
+            request.setAttribute("bill", bill);
+        }
+        request.setAttribute("order", order);
+        request.setAttribute("displayActionForm", model.isAdminAccessAllowed(user));
+
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/order-single.jsp");
         requestDispatcher.forward(request, response);

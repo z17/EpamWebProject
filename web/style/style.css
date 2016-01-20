@@ -18,6 +18,7 @@ h2 {
 }
 
 .header {
+    position: relative;
     background: #f0f0f0;
     padding: 20px;
     height: 100px;
@@ -25,19 +26,22 @@ h2 {
 }
 
 .header .logo {
-    float: left;
     font-size:30px;
     font-weight: bold;
 
     margin: 20px 0 0 50px;
 }
 
+.header .menu {
+    margin-top:35px
+
+}
 .header .login-header-form {
-    float:right;
-    margin: 10px 30px 0 0;
+    position: absolute;
+    top:30px;
+    right:30px;
     padding: 10px 20px;
     border:1px solid #aaa;
-    position: relative;
 
 }
 .login-order-form {
@@ -91,13 +95,22 @@ h2 {
     display: inline-block;
 }
 
-.item .order {
+.item .order-item {
     margin: 5px 0 0 10px;
-    padding: 5px;
-    background: #fff;
     display: inline-block;
-    cursor: pointer;
+}
+.item .order-item .order-button {
+    background: #fff;
+    padding: 5px;
     text-decoration: underline;
+    margin-right:10px;
+    cursor: pointer;
+}
+
+.item .order-item .order-item-less, .item .order-item .order-item-more, .item .count .order-item-less, .item .count .order-item-more {
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 0 4px;
 }
 
 .item .item-image {

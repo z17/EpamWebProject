@@ -25,7 +25,7 @@
                     <div class="price">
                         Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
                     </div>
-                    <div class="count">Количество: <c:out value="${entry.value}"/></div>
+                    <div class="count">Количество: <span class="js-order-item-less order-item-less">-</span> <span class="js-order-item-count order-item-count"><c:out value="${entry.value}"/></span> <span class="js-order-item-more order-item-more">+</span></div>
                 </div>
             </c:forEach>
             <c:if test="${sessionScope.user != null}">

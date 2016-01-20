@@ -110,7 +110,7 @@ public class OrderDao implements InterfaceDao<Order> {
     }
 
     public ArrayList<Order> getByUserId(int id) {
-        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE user_id = ?";
+        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE user_id = ? ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
         ArrayList<Order> result =  null;
         try (Connection connection = pool.takeConnection();
@@ -132,7 +132,7 @@ public class OrderDao implements InterfaceDao<Order> {
         ArrayList<Integer> listStatusId = new ArrayList<>();
         listStatus.stream().forEach((item) -> listStatusId.add(item.getValue()));
         String statusStr = StringUtils.join(listStatusId, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
-        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE status in ("+statusStr+")";
+        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE status in ("+statusStr+") ORDER BY id DESC";
 
         ConnectionPool pool = ConnectionPool.getInstance();
         ArrayList<Order> result =  null;

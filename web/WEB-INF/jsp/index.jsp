@@ -25,7 +25,10 @@
                 <div class="price">
                     Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
                 </div>
-                <div class="order js-order">Заказать</div>
+                <div class="order-item">
+                    <span class="js-order order-button">Заказать</span>
+                    <span class="js-order-item-less order-item-less">-</span> <span class="js-order-item-count order-item-count">0</span> <span class="js-order-item-more order-item-more">+</span>
+                </div>
             </div>
         </c:forEach>
         <c:if test="${menu == null || menu.size() == 0}">

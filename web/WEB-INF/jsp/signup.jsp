@@ -1,9 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="lang" uri="/WEB-INF/tld/taglib.tld" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Регистрация</title>
+    <title><lang:message text="singup.title"/></title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/style/normalize.css" type="text/css">
     <link rel="stylesheet" href="/style/style.css" type="text/css">
@@ -14,21 +15,21 @@
 <div class="wrapper">
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
-        <h1>Регистрация</h1>
+        <h1><lang:message text="singup.header"/></h1>
         <c:if test="${sessionScope.user == null}">
             <c:forEach var="message" items="${messages}">
-                <p><c:out value="${message}" /></p>
+                <p><lang:message text="${'signup.'.concat(message)}"/></p>
             </c:forEach>
 
         <form method="POST" class="signup">
-            <input type="text" name="name" placeholder="Имя" />
-            <input type="text" name="login" placeholder="Логин" />
-            <input type="password" name="password" placeholder="Пароль" />
+            <input type="text" name="name" placeholder="<lang:message text="signup.name"/>" />
+            <input type="text" name="login" placeholder="<lang:message text="signup.login"/>" />
+            <input type="password" name="password" placeholder="<lang:message text="signup.password" />" />
             <input type="submit" name="submit" />
         </form>
         </c:if>
         <c:if test="${sessionScope.user != null}">
-            <p>Вы авторизованы</p>
+            <p><lang:message text="signup.already"/></p>
         </c:if>
     </div>
     <%@ include file="tmp/footer.jsp" %>

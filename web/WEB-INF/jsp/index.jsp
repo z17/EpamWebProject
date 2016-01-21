@@ -1,9 +1,12 @@
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
+<%@ taglib prefix="lang" uri="/WEB-INF/tld/taglib.tld" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Главная страница</title>
+    <title>
+        <lang:message text="main.title" />
+    </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/style/normalize.css" type="text/css">
     <link rel="stylesheet" href="/style/style.css" type="text/css">
@@ -14,8 +17,7 @@
 <div class="wrapper">
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
-        <h1>Меню</h1>
-
+        <h1><lang:message text="main.header" /></h1>
         <c:forEach var="item" items="${menu}">
             <div class="item" data-id="<c:out value="${item.getId()}"/>">
                 <h2><c:out value="${item.getName()}"/></h2>
@@ -23,10 +25,10 @@
                     <img src="<c:out value="${item.getImage()}"/>" class="item-image"/>
                     <c:out value="${item.getDescription()}"/></div>
                 <div class="price">
-                    Цена: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+                    <lang:message text="item.price" />: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
                 </div>
                 <div class="order-item">
-                    <span class="js-order order-button">Заказать</span>
+                    <span class="js-order order-button"><lang:message text="item.order" /></span>
                     <span class="js-order-item-less order-item-less">-</span> <span class="js-order-item-count order-item-count">0</span> <span class="js-order-item-more order-item-more">+</span>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -17,7 +18,11 @@
         <c:if test="${order != null}">
             <h1>Заказ №<c:out value="${order.getId()}"/></h1>
             <div class="order" data-id="<c:out value="${order.getId()}"/>">
-                <p>Дата: <c:out value="${order.getTime()}"/></p>
+                <p>Дата:
+                    <fmt:parseDate value="${order.getTime()}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                    <fmt:formatDate value="${parsedDate}" var="stdDatum" type="date" pattern="d.MM.yyyy" />
+                    <c:out value="${stdDatum}" />
+                </p>
                 <p>Цена: <c:out value="${order.getPrice()}"/> р.</p>
                 <p>Статус: <c:out value="${order.getStatus()}"/></p>
                 <c:if test="${displayActionForm}">

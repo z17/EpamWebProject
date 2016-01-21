@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -50,7 +51,11 @@
                 <c:forEach var="order" items="${ordersList}">
                     <div class="order" data-id="<c:out value="${order.getId()}"/>">
                         <h3>Заказ №<c:out value="${order.getId()}"/></h3>
-                        <p>Дата: <c:out value="${order.getTime()}"/></p>
+                        <p>Дата:
+                            <fmt:parseDate value="${order.getTime()}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                            <fmt:formatDate value="${parsedDate}" var="stdDatum" type="date" pattern="d.MM.yyyy" />
+                            <c:out value="${stdDatum}" />
+                        </p>
                         <p>Цена: <c:out value="${order.getPrice()}"/> р.</p>
                         <p>Статус: <c:out value="${order.getStatus()}"/></p>
                         <p><a href="/order/<c:out value="${order.getId()}"/>">Подробнее</a> </p>

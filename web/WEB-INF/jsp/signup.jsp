@@ -16,6 +16,10 @@
     <div class="middle">
         <h1>Регистрация</h1>
         <c:if test="${sessionScope.user == null}">
+            <c:forEach var="message" items="${messages}">
+                <p><c:out value="${message}" /></p>
+            </c:forEach>
+
         <form method="POST" class="signup">
             <input type="text" name="name" placeholder="Имя" />
             <input type="text" name="login" placeholder="Логин" />

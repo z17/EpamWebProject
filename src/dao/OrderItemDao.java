@@ -5,12 +5,13 @@ import entity.OrderItem;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class OrderItemDao implements InterfaceDao<OrderItem> {
     private static String TABLE_NAME = "order_item";
     @Override
-    public Map<Integer, OrderItem> get() {
+    public Collection<OrderItem> get() {
         return null;
     }
 

@@ -6,74 +6,61 @@ import entity.Item;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ItemDao implements InterfaceDao<Item> {
     // кешируем т.к. item нам нужны постоянно.
-    private static Map<Integer, Item> allItems = null;
+    private static LinkedHashMap<Integer, Item> allItems = null;
     private static String TABLE_NAME = "item";
 
     @Override
-    public Map<Integer, Item> get() {
-        if (allItems != null) {
+    public Collection<Item> get() {
+        if (allItems == null) {
             synchronized (ItemDao.class) {
-                if (allItems != null) {
-                    return allItems;
+                if (allItems == null) {
+                    fillingData();
+                }
+            }
+        }
+        return allItems.values();
+    }
+
+    public ArrayList<Item> get(int start, int end) {
+        if (allItems == null) {
+            synchronized (ItemDao.class) {
+                if (allItems == null) {
+                    fillingData();
                 }
             }
         }
 
-        Map<Integer, Item> result = new HashMap<>();
-        String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME;
-        ConnectionPool pool = ConnectionPool.getInstance();
-        try (Connection connection = pool.takeConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     select,
-                     ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY
-             )
-        ) {
-            result = getItemsList(ps);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ArrayList<Item> res = new ArrayList<>();
+        res.addAll(allItems.values());
+
+        if (end > res.size()) {
+            end = res.size();
+        } else {
+            end--;
         }
-        allItems = result;
-        return result;
+        start--;
+        return new ArrayList<>( res.subList(start, end));
+
     }
 
-    public Map<Integer, Item> getByArrayId(Collection<Integer> ids) {
-        Map<Integer, Item> result = null;
-
-        String idsStr = StringUtils.join(ids, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
-        String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " WHERE id in ("+idsStr+")";
-        ConnectionPool pool = ConnectionPool.getInstance();
-        try (Connection connection = pool.takeConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     select,
-                     ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY
-             )
-        ) {
-            result = getItemsList(ps);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public Collection<Item> getByArrayId(Collection<Integer> ids) {
+        if (allItems == null) {
+            synchronized (ItemDao.class) {
+                if (allItems == null) {
+                    fillingData();
+                }
+            }
         }
-        return result;
-    }
 
-    private Map<Integer, Item> getItemsList(PreparedStatement ps) throws SQLException {
-        Map<Integer, Item> result = new HashMap<>();
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                boolean inStock = rs.getBoolean("in_stock");
-                int price = rs.getInt("price");
-                String description = rs.getString("description");
-                String image = rs.getString("image");
-                result.put(id, new Item(id, name, inStock, price, description, image));
+        Collection<Item> result = new ArrayList<>();
+        for (Integer id: ids) {
+            Item current = allItems.get(id);
+            if (current != null) {
+                result.add(current);
             }
         }
         return result;
@@ -81,7 +68,14 @@ public class ItemDao implements InterfaceDao<Item> {
 
     @Override
     public Item getById(int id) {
-        return null;
+        if (allItems == null) {
+            synchronized (ItemDao.class) {
+                if (allItems == null) {
+                    fillingData();
+                }
+            }
+        }
+        return allItems.get(id);
     }
 
     @Override
@@ -100,5 +94,52 @@ public class ItemDao implements InterfaceDao<Item> {
     public void delete(int id) {
         allItems = null;
 
+    }
+
+
+    private LinkedHashMap<Integer, Item> getItemsList(PreparedStatement ps) throws SQLException {
+        LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                boolean inStock = rs.getBoolean("in_stock");
+                int price = rs.getInt("price");
+                String description = rs.getString("description");
+                String image = rs.getString("image");
+                result.put(id, new Item(id, name, inStock, price, description, image));
+            }
+        }
+        return result;
+    }
+
+    private void fillingData() {
+        LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
+        String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " ORDER BY id DESC";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ) {
+            result = getItemsList(ps);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        allItems = result;
+    }
+
+    public int getNumber() {
+
+        if (allItems == null) {
+            synchronized (ItemDao.class) {
+                if (allItems == null) {
+                    fillingData();
+                }
+            }
+        }
+        return allItems.size();
     }
 }

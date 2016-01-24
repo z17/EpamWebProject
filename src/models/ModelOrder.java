@@ -18,9 +18,9 @@ public class ModelOrder {
     public Map<Item, Integer> getCurrentOrder(String orderCookieValue) {
         HashMap<Integer, Integer> itemsId = parseOrderCookie(orderCookieValue);
         ItemDao itemDao = new ItemDao();
-        Map<Integer, Item> items = itemDao.getByArrayId(itemsId.keySet());
+        Collection<Item> items = itemDao.getByArrayId(itemsId.keySet());
         Map<Item, Integer> result = new HashMap<>();
-        for (Item item : items.values()) {
+        for (Item item : items) {
             result.put(item, itemsId.get(item.getId()));
         }
         return result;

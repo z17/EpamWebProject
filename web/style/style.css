@@ -161,3 +161,14 @@ form.signup input {
 .order p {
     margin: 5px 0;
 }
+
+.pages {
+    margin: 15px 0;
+    text-align: center;
+}
+.pages .page {
+    padding: 5px;
+}
+.pages .page.current {
+    font-weight: bold;
+}

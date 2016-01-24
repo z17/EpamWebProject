@@ -33,6 +33,22 @@
                 </div>
             </div>
         </c:forEach>
+        <div class="pages">
+            <c:if test="${currentPage > 1}">
+                <a href="/page/<c:out value="${currentPage - 1}"/>" class="page prev"><<</a>
+            </c:if>
+            <c:forEach var="page" begin="1" end="${numberOfPages}">
+                <c:if test="${page == currentPage}">
+                    <span class="page current"><c:out value="${page}"/></span>
+                </c:if>
+                <c:if test="${page != currentPage}">
+                    <a href="/page/<c:out value="${page}"/>" class="page"><c:out value="${page}"/></a>
+                </c:if>
+            </c:forEach>
+            <c:if test="${numberOfPages > currentPage}">
+                <a href="/page/<c:out value="${currentPage + 1}"/>" class="page next">>></a>
+            </c:if>
+        </div>
         <c:if test="${menu == null || menu.size() == 0}">
             <p>Не найдено</p>
         </c:if>

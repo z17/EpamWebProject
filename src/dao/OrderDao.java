@@ -16,7 +16,7 @@ import java.util.Map;
 public class OrderDao implements InterfaceDao<Order> {
     private static String TABLE_NAME = "`order`";
     @Override
-    public Map<Integer, Order> get() {
+    public Collection<Order> get() {
         return null;
     }
 
@@ -168,9 +168,8 @@ public class OrderDao implements InterfaceDao<Order> {
             ArrayList<OrderItem> orderItems = dao.getByOrderId(one.getId());
 
             ItemDao itemDao = new ItemDao();
-            Map<Integer, Item> list = itemDao.get();
             for (OrderItem currentOrderItem: orderItems) {
-                one.addItem(currentOrderItem.getCount(), list.get(currentOrderItem.getIdItem()));
+                    one.addItem(currentOrderItem.getCount(), itemDao.getById(currentOrderItem.getIdItem()));
             }
         }
         return result;

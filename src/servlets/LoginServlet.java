@@ -2,6 +2,7 @@ package servlets;
 
 import entity.User;
 import models.ModelUser;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,6 +15,8 @@ import java.io.IOException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet{
+    private static final Logger LOG = Logger.getLogger(LoginServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -45,6 +48,7 @@ public class LoginServlet extends HttpServlet{
                     return;
                 }
             } else {
+                LOG.info("login attempt");
                 request.setAttribute("successLogin", false);
             }
         }

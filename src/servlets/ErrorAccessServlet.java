@@ -2,6 +2,7 @@ package servlets;
 
 import entity.Item;
 import models.ModelItem;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import java.util.Collection;
 
 @WebServlet("/error-access")
 public class ErrorAccessServlet extends HttpServlet{
+    private static final Logger LOG = Logger.getLogger(ErrorAccessServlet.class);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -26,6 +28,7 @@ public class ErrorAccessServlet extends HttpServlet{
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        LOG.warn("access error");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error-access.jsp");
         requestDispatcher.forward(request, response);
     }

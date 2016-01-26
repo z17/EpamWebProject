@@ -6,13 +6,9 @@ import static org.junit.Assert.*;
 
 public class ModelItemTest {
 
-    @Test
-    public void testGetMenu() throws Exception {
-
-    }
 
     @Test
-    public void testGetNumberOfPage() throws Exception {
+    public void testGetPageNumber() throws Exception {
         ModelItem model = new ModelItem();
 
         assertTrue(model.getPageNumber("") == 1);

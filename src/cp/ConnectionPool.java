@@ -38,7 +38,12 @@ public final class ConnectionPool {
         this.url = dbResourceManager.getValue(DBParameter.DB_URL);
         this.user = dbResourceManager.getValue(DBParameter.DB_USER);
         this.password = dbResourceManager.getValue(DBParameter.DB_PASSWORD);
-        this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
+        try {
+            this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
+        } catch (NumberFormatException e) {
+            LOG.error("invalid poolsize format", e);
+            this.poolSize = 5;
+        }
         initPoolData();
     }
 

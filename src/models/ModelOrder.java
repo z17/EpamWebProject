@@ -6,6 +6,7 @@ import dao.ItemDao;
 import dao.OrderDao;
 import dao.OrderItemDao;
 import entity.*;
+import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ModelOrder {
+    private static final Logger LOG = Logger.getLogger(ModelOrder.class);
     private static String[] ACTIONS = {"executed", "delete", "ready", "close"};
 
     public Map<Item, Integer> getCurrentOrder(String orderCookieValue) {
@@ -78,6 +80,7 @@ public class ModelOrder {
                 try {
                     return Integer.parseInt(path[2]);
                 } catch (NumberFormatException e) {
+                    LOG.warn("error format page number");
                     return 0;
                 }
             }

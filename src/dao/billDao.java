@@ -2,14 +2,18 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Bill;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
+import java.util.Collection;
 import java.util.Map;
 
 public class BillDao implements InterfaceDao<Bill> {
+    private static final Logger LOG = Logger.getLogger(BillDao.class);
     private static String TABLE_NAME = "bill";
+
     @Override
-    public Map<Integer, Bill> get() {
+    public Collection<Bill> get() {
         return null;
     }
 
@@ -39,7 +43,7 @@ public class BillDao implements InterfaceDao<Bill> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return null;
     }
@@ -63,7 +67,7 @@ public class BillDao implements InterfaceDao<Bill> {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return newId;
     }
@@ -82,7 +86,7 @@ public class BillDao implements InterfaceDao<Bill> {
             ps.setInt(4, item.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
 
     }

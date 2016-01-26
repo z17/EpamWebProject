@@ -1,8 +1,11 @@
 package languages;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
 
 public class Messages {
+    private static final Logger LOG = Logger.getLogger(Messages.class);
     private static Languages DEFAULT_LOCALE = Languages.RU;
     private static Map<Languages, ResourceBundle> files = new HashMap<>();
 
@@ -20,11 +23,17 @@ public class Messages {
     public static String getMessage(String message, Languages locale) {
         try {
             if (locale == null) {
+                LOG.warn("null locale");
                 return files.get(DEFAULT_LOCALE).getString(message);
             }
             return files.get(locale).getString(message);
         } catch (MissingResourceException e) {
+            LOG.warn("Message no found", e);
             return "";
         }
+    }
+
+    public static String getMessage(String message) {
+        return getMessage(message, null);
     }
 }

@@ -1,5 +1,6 @@
 package cp;
 
+import org.apache.log4j.Logger;
 import settings.ProjectSetting;
 
 import java.sql.*;
@@ -8,6 +9,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public final class ConnectionPool {
+    private static final Logger LOG = Logger.getLogger(ConnectionPool.class);
+
     private BlockingQueue<Connection> connectionQueue;
     private BlockingQueue<Connection> givenAwayConQueue;
 
@@ -53,8 +56,10 @@ public final class ConnectionPool {
                 connectionQueue.add(polledConnection);
             }
 
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            LOG.fatal("error driver not found", e);
+        } catch (SQLException e) {
+            LOG.fatal("error get connection", e);
         }
     }
 
@@ -67,7 +72,7 @@ public final class ConnectionPool {
             closeConnectionsQueue(givenAwayConQueue);
             closeConnectionsQueue(connectionQueue);
         } catch (SQLException e) {
-            System.out.println("ERROR CLOSE CONNECTIONS");
+            LOG.error("error close connections", e);
         }
     }
 
@@ -77,7 +82,7 @@ public final class ConnectionPool {
             connection = connectionQueue.take();
             givenAwayConQueue.add(connection);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.error("error take connection", e);
         }
         return connection;
     }
@@ -86,19 +91,19 @@ public final class ConnectionPool {
         try {
             con.close();
         } catch (SQLException e) {
-            System.out.println("Connection isn't in pool");
+            LOG.warn("Connection isn't in pool");
         }
 
         try {
             rs.close();
         } catch (SQLException e) {
-            System.out.println("Result set isnt closed");
+            LOG.warn("Result set isnt closed");
         }
 
         try {
             st.close();
         } catch (SQLException e) {
-            System.out.println("Statement isnt close");
+            LOG.warn("Statement isnt close");
         }
     }
 
@@ -107,13 +112,13 @@ public final class ConnectionPool {
         try {
             con.close();
         } catch (SQLException e) {
-            System.out.println("Connection isn't in pool");
+            LOG.warn("Connection isn't in pool");
         }
 
         try {
             st.close();
         } catch (SQLException e) {
-            System.out.println("Statement isnt close");
+            LOG.warn("Statement isnt close");
         }
     }
 

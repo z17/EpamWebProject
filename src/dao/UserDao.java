@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.User;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class UserDao implements InterfaceDao<User> {
+    private static final Logger LOG = Logger.getLogger(UserDao.class);
     static String TABLE_NAME = "user";
 
     @Override
@@ -44,7 +46,7 @@ public class UserDao implements InterfaceDao<User> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return result;
     }
@@ -69,7 +71,7 @@ public class UserDao implements InterfaceDao<User> {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return newId;
     }

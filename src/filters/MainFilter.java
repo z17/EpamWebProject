@@ -1,5 +1,8 @@
 package filters;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.chainsaw.Main;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;

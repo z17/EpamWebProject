@@ -18,37 +18,39 @@
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
         <h1><lang:message text="main.header" /></h1>
-        <c:forEach var="item" items="${menu}">
-            <div class="item" data-id="<c:out value="${item.getId()}"/>">
-                <h2><c:out value="${item.getName()}"/></h2>
-                <div class="description">
-                    <img src="<c:out value="${item.getImage()}"/>" class="item-image"/>
-                    <c:out value="${item.getDescription()}"/></div>
-                <div class="price">
-                    <lang:message text="item.price" />: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+        <c:if test="${menu != null}">
+            <c:forEach var="item" items="${menu}">
+                <div class="item" data-id="<c:out value="${item.getId()}"/>">
+                    <h2><c:out value="${item.getName()}"/></h2>
+                    <div class="description">
+                        <img src="<c:out value="${item.getImage()}"/>" class="item-image"/>
+                        <c:out value="${item.getDescription()}"/></div>
+                    <div class="price">
+                        <lang:message text="item.price" />: <span class="price-sum"><c:out value="${item.getPrice()}"/></span> р.
+                    </div>
+                    <div class="order-item">
+                        <span class="js-order order-button"><lang:message text="item.order" /></span>
+                        <span class="js-order-item-less order-item-less">-</span> <span class="js-order-item-count order-item-count">0</span> <span class="js-order-item-more order-item-more">+</span>
+                    </div>
                 </div>
-                <div class="order-item">
-                    <span class="js-order order-button"><lang:message text="item.order" /></span>
-                    <span class="js-order-item-less order-item-less">-</span> <span class="js-order-item-count order-item-count">0</span> <span class="js-order-item-more order-item-more">+</span>
-                </div>
-            </div>
-        </c:forEach>
-        <div class="pages">
-            <c:if test="${currentPage > 1}">
-                <a href="/page/<c:out value="${currentPage - 1}"/>" class="page prev"><<</a>
-            </c:if>
-            <c:forEach var="page" begin="1" end="${numberOfPages}">
-                <c:if test="${page == currentPage}">
-                    <span class="page current"><c:out value="${page}"/></span>
-                </c:if>
-                <c:if test="${page != currentPage}">
-                    <a href="/page/<c:out value="${page}"/>" class="page"><c:out value="${page}"/></a>
-                </c:if>
             </c:forEach>
-            <c:if test="${numberOfPages > currentPage}">
-                <a href="/page/<c:out value="${currentPage + 1}"/>" class="page next">>></a>
-            </c:if>
-        </div>
+            <div class="pages">
+                <c:if test="${currentPage > 1}">
+                    <a href="/page/<c:out value="${currentPage - 1}"/>" class="page prev"><<</a>
+                </c:if>
+                <c:forEach var="page" begin="1" end="${numberOfPages}">
+                    <c:if test="${page == currentPage}">
+                        <span class="page current"><c:out value="${page}"/></span>
+                    </c:if>
+                    <c:if test="${page != currentPage}">
+                        <a href="/page/<c:out value="${page}"/>" class="page"><c:out value="${page}"/></a>
+                    </c:if>
+                </c:forEach>
+                <c:if test="${numberOfPages > currentPage}">
+                    <a href="/page/<c:out value="${currentPage + 1}"/>" class="page next">>></a>
+                </c:if>
+            </div>
+        </c:if>
         <c:if test="${menu == null || menu.size() == 0}">
             <p>Не найдено</p>
         </c:if>

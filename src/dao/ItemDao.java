@@ -3,12 +3,16 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Item;
+import languages.Languages;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.*;
 
 public class ItemDao implements InterfaceDao<Item> {
+    private static final Logger LOG = Logger.getLogger(ItemDao.class);
+
     // кешируем т.к. item нам нужны постоянно.
     private static LinkedHashMap<Integer, Item> allItems = null;
     private static String TABLE_NAME = "item";
@@ -36,6 +40,9 @@ public class ItemDao implements InterfaceDao<Item> {
 
         ArrayList<Item> res = new ArrayList<>();
         res.addAll(allItems.values());
+        if (start > res.size()) {
+            return null;
+        }
 
         if (end > res.size()) {
             end = res.size();
@@ -126,13 +133,12 @@ public class ItemDao implements InterfaceDao<Item> {
         ) {
             result = getItemsList(ps);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         allItems = result;
     }
 
     public int getNumber() {
-
         if (allItems == null) {
             synchronized (ItemDao.class) {
                 if (allItems == null) {

@@ -3,6 +3,7 @@ package models;
 import dao.UserDao;
 import entity.User;
 import models.messages.UserMessages;
+import org.apache.log4j.Logger;
 import settings.ProjectSetting;
 
 import java.io.UnsupportedEncodingException;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class ModelUser {
+    private static final Logger LOG = Logger.getLogger(ModelUser.class);
     private static int PASSWORD_LENGTH_MIN = 5;
     private static int PASSWORD_LENGTH_MAX = 15;
     private static int DEFAULT_GROUP_ID = 1;
@@ -29,15 +31,15 @@ public class ModelUser {
             }
             return sb.toString();
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOG.error("encrypt password error", e);
         }
-        // todo обработать ситуацию, когда пароль не зашифрован
         return null;
     }
 
     public ArrayList<UserMessages> createUser(String name, String login, String password) {
         ArrayList<UserMessages> validate = validateUserData(name, login, password);
         if (validate.get(0) == UserMessages.CORRECT_SIGNUP) {
+            // todo обработать ситуацию, когда пароль не зашифрован (null)
             password = encryptPassword(password);
             User user = new User(name, DEFAULT_GROUP_ID, login, password);
             UserDao dao = new UserDao();

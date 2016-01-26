@@ -2,6 +2,7 @@ package models;
 
 import dao.ItemDao;
 import entity.Item;
+import org.apache.log4j.Logger;
 import settings.ProjectSetting;
 
 import java.util.ArrayList;
@@ -9,9 +10,11 @@ import java.util.Collection;
 import java.util.Map;
 
 public class ModelItem {
-    static private String PAGE_PREFIX = "/page/";
-    static private String SETTINGS_ITEMS_PER_PAGE = "pages.items_per_page";
-    static private int DEFAULT_ITEMS_PER_PAGE = 5;
+    private static final Logger LOG = Logger.getLogger(ModelItem.class);
+
+    private static String PAGE_PREFIX = "/page/";
+    private static String SETTINGS_ITEMS_PER_PAGE = "pages.items_per_page";
+    private static int DEFAULT_ITEMS_PER_PAGE = 5;
 
     public Collection<Item> getMenu() {
         ItemDao dao = new ItemDao();
@@ -25,6 +28,7 @@ public class ModelItem {
         try {
             itemsPerPage = Integer.parseInt(setting.getValue(SETTINGS_ITEMS_PER_PAGE));
         } catch (NumberFormatException e) {
+            LOG.error("error format items per page");
             itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
         }
         int startItem = itemsPerPage * (page - 1) + 1;
@@ -65,6 +69,7 @@ public class ModelItem {
         try {
             itemsPerPage = Integer.parseInt(setting.getValue(SETTINGS_ITEMS_PER_PAGE));
         } catch (NumberFormatException e) {
+            LOG.error("error format items per page");
             itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
         }
         return (int)Math.ceil((double)count / itemsPerPage);

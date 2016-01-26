@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.OrderItem;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.Collection;
 import java.util.Map;
 
 public class OrderItemDao implements InterfaceDao<OrderItem> {
+    private static final Logger LOG = Logger.getLogger(OrderItemDao.class);
+
     private static String TABLE_NAME = "order_item";
     @Override
     public Collection<OrderItem> get() {
@@ -39,7 +42,7 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return newId;
     }
@@ -77,7 +80,7 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
         return result;
     }
@@ -92,7 +95,7 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
             ps.setInt(1, orderId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("connection error", e);
         }
     }
 }

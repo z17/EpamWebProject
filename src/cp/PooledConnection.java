@@ -1,5 +1,7 @@
 package cp;
 
+import org.apache.log4j.Logger;
+
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
@@ -7,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
 public class PooledConnection implements Connection {
+    private static final Logger LOG = Logger.getLogger(javax.sql.PooledConnection.class);
     private Connection connection;
     private BlockingQueue<Connection> connectionQueue;
     private BlockingQueue<Connection> givenAwayConQueue;
@@ -18,7 +21,7 @@ public class PooledConnection implements Connection {
         try {
             this.connection.setAutoCommit(true);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("set auto commit error", e);
         }
     }
 

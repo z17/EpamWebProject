@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * Страницы с содержимым меню
+ */
 @WebServlet({"/index.jsp" , "/page/*"})
 public class MainServlet extends HttpServlet{
     private static final Logger LOG = Logger.getLogger(MainServlet.class);

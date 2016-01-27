@@ -8,6 +8,9 @@ import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ *  Пулл соединений
+ */
 public final class ConnectionPool {
     private static final Logger LOG = Logger.getLogger(ConnectionPool.class);
 
@@ -47,7 +50,7 @@ public final class ConnectionPool {
         initPoolData();
     }
 
-    public void initPoolData() {
+    private void initPoolData() {
         Locale.setDefault(Locale.ENGLISH);
 
         try {

@@ -13,16 +13,29 @@ public class UserDao implements InterfaceDao<User> {
     private static final Logger LOG = Logger.getLogger(UserDao.class);
     static String TABLE_NAME = "user";
 
+    /**
+     * @return Списоз пользователей
+     */
     @Override
     public Collection<User> get() {
         return null;
     }
 
+    /**
+     * Пользователь по id
+     * @param id пользователя
+     * @return пользователь
+     */
     @Override
     public User getById(int id) {
         return null;
     }
 
+    /**
+     * Пользователь по логину
+     * @param login пользователя
+     * @return пользователь или null
+     */
     public User getByLogin(String login) {
         String select = "SELECT id, name, group_id, login, password FROM " + TABLE_NAME + " WHERE login = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -51,6 +64,11 @@ public class UserDao implements InterfaceDao<User> {
         return result;
     }
 
+    /**
+     * Создаёт пользователя
+     * @param item пользователь
+     * @return id нового пользователя
+     */
     @Override
     public int create(User item) {
         int newId = 0;
@@ -76,11 +94,19 @@ public class UserDao implements InterfaceDao<User> {
         return newId;
     }
 
+    /**
+     * Обновляет данные пользователя
+     * @param item пользователь
+     */
     @Override
     public void update(User item) {
 
     }
 
+    /**
+     * Удаляет пользователя
+     * @param id пользователя
+     */
     @Override
     public void delete(int id) {
 

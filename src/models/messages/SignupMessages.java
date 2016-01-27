@@ -1,6 +1,9 @@
 package models.messages;
 
-public enum UserMessages {
+/**
+ * Статусы обработки формы регистрации
+ */
+public enum SignupMessages {
     EMPTY_NAME,
     EMPTY_LOGIN,
     EMPTY_PASSWORD,

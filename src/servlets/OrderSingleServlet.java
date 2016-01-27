@@ -12,6 +12,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
+/**
+ * Страница отдельного заказа
+ */
 @WebServlet(urlPatterns = "/order/*")
 public class OrderSingleServlet extends HttpServlet {
     @Override

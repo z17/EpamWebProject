@@ -14,6 +14,10 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Сервлет панели управления заказами
+ * Направляет на /error-access в случае отсутсвия доступа у пользователя
+ */
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
     @Override

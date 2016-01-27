@@ -1,7 +1,5 @@
 package servlets;
 
-import entity.Item;
-import models.ModelItem;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -11,9 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
+/**
+ * Ошибка доступа
+ */
 @WebServlet("/error-access")
 public class ErrorAccessServlet extends HttpServlet{
     private static final Logger LOG = Logger.getLogger(ErrorAccessServlet.class);

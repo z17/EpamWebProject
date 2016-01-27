@@ -2,7 +2,7 @@ package models;
 
 import dao.UserDao;
 import entity.User;
-import models.messages.UserMessages;
+import models.messages.SignupMessages;
 import org.apache.log4j.Logger;
 import settings.ProjectSetting;
 
@@ -36,9 +36,9 @@ public class ModelUser {
         return null;
     }
 
-    public ArrayList<UserMessages> createUser(String name, String login, String password) {
-        ArrayList<UserMessages> validate = validateUserData(name, login, password);
-        if (validate.get(0) == UserMessages.CORRECT_SIGNUP) {
+    public ArrayList<SignupMessages> createUser(String name, String login, String password) {
+        ArrayList<SignupMessages> validate = validateUserData(name, login, password);
+        if (validate.get(0) == SignupMessages.CORRECT_SIGNUP) {
             // todo обработать ситуацию, когда пароль не зашифрован (null)
             password = encryptPassword(password);
             User user = new User(name, DEFAULT_GROUP_ID, login, password);
@@ -67,29 +67,29 @@ public class ModelUser {
         return user;
     }
 
-    private ArrayList<UserMessages> validateUserData(String name, String login, String password) {
-        ArrayList<UserMessages> validate = new ArrayList<>();
+    private ArrayList<SignupMessages> validateUserData(String name, String login, String password) {
+        ArrayList<SignupMessages> validate = new ArrayList<>();
 
         if (name == null || name.length() == 0) {
-            validate.add(UserMessages.EMPTY_NAME);
+            validate.add(SignupMessages.EMPTY_NAME);
         }
         if (login == null || login.length() == 0) {
-            validate.add(UserMessages.EMPTY_LOGIN);
+            validate.add(SignupMessages.EMPTY_LOGIN);
         }
         if (password == null || password.length() == 0) {
-            validate.add(UserMessages.EMPTY_PASSWORD);
+            validate.add(SignupMessages.EMPTY_PASSWORD);
         } else if (password.length() < PASSWORD_LENGTH_MIN || password.length() > PASSWORD_LENGTH_MAX) {
-            validate.add(UserMessages.PASSWORD_ERROR);
+            validate.add(SignupMessages.PASSWORD_ERROR);
         }
 
         UserDao dao = new UserDao();
         User findLogin = dao.getByLogin(login);
         if (findLogin != null) {
-            validate.add(UserMessages.LOGIN_EXIST);
+            validate.add(SignupMessages.LOGIN_EXIST);
         }
 
         if (validate.size() == 0) {
-            validate.add(UserMessages.CORRECT_SIGNUP);
+            validate.add(SignupMessages.CORRECT_SIGNUP);
         }
 
         return validate;

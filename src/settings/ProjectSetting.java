@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Настройки проекта
+ */
 public class ProjectSetting {
     private static final Logger LOG = Logger.getLogger(ProjectSetting.class);
 
@@ -12,7 +15,6 @@ public class ProjectSetting {
     private static ProjectSetting instance = new ProjectSetting();
 
     private ResourceBundle properties;
-
 
     public static ProjectSetting getInstance() {
         return instance;

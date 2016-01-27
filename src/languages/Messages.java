@@ -4,6 +4,9 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 
+/**
+ * Интернационализированные сообщения
+ */
 public class Messages {
     private static final Logger LOG = Logger.getLogger(Messages.class);
     private static Languages DEFAULT_LOCALE = Languages.RU;
@@ -13,6 +16,9 @@ public class Messages {
         reload();
     }
 
+    /**
+     * Загружает языковые файлы
+     */
     public static void reload() {
         ResourceBundle ru = ResourceBundle.getBundle("languages.text", new Locale("ru", "RU"));
         ResourceBundle en = ResourceBundle.getBundle("languages.text", new Locale("en", "US"));
@@ -20,6 +26,13 @@ public class Messages {
         files.put(Languages.EN, en);
     }
 
+    /**
+     * Получаем сообщение в зависимости от локали
+     * По-умолчанию язык из DEFAULT_LOCALE
+     * @param message ключ сообщения
+     * @param locale локаль
+     * @return сообщение в заданном языке или пустую строку
+     */
     public static String getMessage(String message, Languages locale) {
         try {
             if (locale == null) {
@@ -33,6 +46,11 @@ public class Messages {
         }
     }
 
+    /**
+     * Получает сообщение из локали по-умолчанию
+     * @param message ключ сообщения
+     * @return сообщение или пустая строка
+     */
     public static String getMessage(String message) {
         return getMessage(message, null);
     }

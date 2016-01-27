@@ -1,5 +1,8 @@
 package entity;
 
+/**
+ * Отношение между заказами и элементами меню
+ */
 public class OrderItem {
     private int id;
     private int idOrder;

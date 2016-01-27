@@ -1,5 +1,8 @@
 package entity;
 
+/**
+ * Счет
+ */
 public class Bill {
     private int id;
     private int orderId;

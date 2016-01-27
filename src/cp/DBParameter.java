@@ -1,6 +1,9 @@
 package cp;
 
-public class DBParameter {
+/**
+ * Название настроек для базы данных
+ */
+public abstract class DBParameter {
     private DBParameter() {}
 
     public static String DB_DRIVER = "db.driver";

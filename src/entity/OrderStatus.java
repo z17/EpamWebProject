@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Статусы заказов
+ */
 public enum OrderStatus {
     NEW(1),
     EXECUTED(2),
@@ -26,10 +29,19 @@ public enum OrderStatus {
         this.value = value;
     }
 
+    /**
+     * Возврашает int значение каждого статуса, соответствующее значению в БД
+     * @return int
+     */
     public int getValue() {
         return value;
     }
 
+    /**
+     * Возвращает статус по его численному значению
+     * @param id значение
+     * @return статус
+     */
     public static OrderStatus valueOf(int id) {
         OrderStatus result = map.get(id);
         if (result == null) {

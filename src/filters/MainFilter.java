@@ -7,6 +7,9 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
+/**
+ * Фильтр с установкой типа и кодировки
+ */
 @WebFilter(urlPatterns = "*")
 public class MainFilter implements Filter {
     private static final String TYPE = "text/html";

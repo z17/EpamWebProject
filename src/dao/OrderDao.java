@@ -13,13 +13,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * DAO для заказов
+ */
 public class OrderDao implements InterfaceDao<Order> {
     private static String TABLE_NAME = "`order`";
+
+    /**
+     * Возвращает все заказы
+     * @return список заказов
+     */
     @Override
     public Collection<Order> get() {
         return null;
     }
 
+    /**
+     * Возвращает заказ по id
+     * @param id заказа
+     * @return заказ
+     */
     @Override
     public Order getById(int id) {
         String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE id = ? LIMIT 1";
@@ -43,6 +56,11 @@ public class OrderDao implements InterfaceDao<Order> {
         return result;
     }
 
+    /**
+     * Добавляет новый заказ в БД
+     * @param item заказ
+     * @return id заказа в БД
+     */
     @Override
     public int create(Order item) {
         String insert = "INSERT INTO " + TABLE_NAME + " (user_id, price, status, time) VALUES (?, ?, ?, ?)";
@@ -70,6 +88,10 @@ public class OrderDao implements InterfaceDao<Order> {
         return newId;
     }
 
+    /**
+     * Обновляет запись в БД
+     * @param item заказ
+     */
     @Override
     public void update(Order item) {
         String update = "UPDATE "+TABLE_NAME+" set user_id = ?, price = ?, status = ?, time = ? WHERE id = ?";
@@ -89,6 +111,10 @@ public class OrderDao implements InterfaceDao<Order> {
         }
     }
 
+    /**
+     * Удаляет запись
+     * @param id записи
+     */
     @Override
     public void delete(int id) {
         // удаляем связи
@@ -109,6 +135,11 @@ public class OrderDao implements InterfaceDao<Order> {
         }
     }
 
+    /**
+     * Получает записи по id пользователя
+     * @param id заказа
+     * @return список заказов
+     */
     public ArrayList<Order> getByUserId(int id) {
         String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE user_id = ? ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -128,6 +159,11 @@ public class OrderDao implements InterfaceDao<Order> {
         return result;
     }
 
+    /**
+     * Получает записи по списку стутосов
+     * @param listStatus колелкция статусов
+     * @return список заказов
+     */
     public ArrayList<Order> getOrderByStatusArray(Collection<OrderStatus> listStatus) {
         ArrayList<Integer> listStatusId = new ArrayList<>();
         listStatus.stream().forEach((item) -> listStatusId.add(item.getValue()));
@@ -150,6 +186,12 @@ public class OrderDao implements InterfaceDao<Order> {
         return result;
     }
 
+    /**
+     * Заполняет коллекцию объектов из PreparedStatement
+     * @param ps PreparedStatement
+     * @return массив заказов
+     * @throws SQLException
+     */
     private ArrayList<Order> getOrders(PreparedStatement ps) throws SQLException {
         ArrayList<Order> result = new ArrayList<>();
         try (ResultSet rs = ps.executeQuery()) {

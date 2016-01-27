@@ -17,6 +17,10 @@ public class ItemDao implements InterfaceDao<Item> {
     private static LinkedHashMap<Integer, Item> allItems = null;
     private static String TABLE_NAME = "item";
 
+    /**
+     * Возвращает все элементы меню
+     * @return collection
+     */
     @Override
     public Collection<Item> get() {
         if (allItems == null) {
@@ -29,6 +33,12 @@ public class ItemDao implements InterfaceDao<Item> {
         return allItems.values();
     }
 
+    /**
+     * Возвращает массив элементов меню с start до end
+     * @param start начало
+     * @param end конец
+     * @return массив или null
+     */
     public ArrayList<Item> get(int start, int end) {
         if (allItems == null) {
             synchronized (ItemDao.class) {
@@ -54,6 +64,11 @@ public class ItemDao implements InterfaceDao<Item> {
 
     }
 
+    /**
+     * Возвращает коллекцию элементов по списку id
+     * @param ids массив id
+     * @return соответствующие элементы
+     */
     public Collection<Item> getByArrayId(Collection<Integer> ids) {
         if (allItems == null) {
             synchronized (ItemDao.class) {
@@ -73,6 +88,11 @@ public class ItemDao implements InterfaceDao<Item> {
         return result;
     }
 
+    /**
+     * Возвращает элемент по его id
+     * @param id элемента
+     * @return элемент
+     */
     @Override
     public Item getById(int id) {
         if (allItems == null) {
@@ -85,18 +105,31 @@ public class ItemDao implements InterfaceDao<Item> {
         return allItems.get(id);
     }
 
+    /**
+     * Добавляет в БД новый элемент
+     * @param item элемент
+     * @return id добавленного
+     */
     @Override
     public int create(Item item) {
         allItems = null;
         return 0;
     }
 
+    /**
+     * Обновляет элемент в БД
+     * @param item обновляемый элемент
+     */
     @Override
     public void update(Item item) {
         allItems = null;
 
     }
 
+    /**
+     * Удаляет
+     * @param id удаляемого
+     */
     @Override
     public void delete(int id) {
         allItems = null;
@@ -104,6 +137,12 @@ public class ItemDao implements InterfaceDao<Item> {
     }
 
 
+    /**
+     * Обрабатывает PreparedStatement возвращая коллекцию элемеентов или null
+     * @param ps PreparedStatement
+     * @return Коллекция элементов
+     * @throws SQLException
+     */
     private LinkedHashMap<Integer, Item> getItemsList(PreparedStatement ps) throws SQLException {
         LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
         try (ResultSet rs = ps.executeQuery()) {
@@ -120,6 +159,9 @@ public class ItemDao implements InterfaceDao<Item> {
         return result;
     }
 
+    /**
+     * Заполняем поле allItems данными из БД для кеширования
+     */
     private void fillingData() {
         LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
         String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " ORDER BY id DESC";
@@ -138,6 +180,9 @@ public class ItemDao implements InterfaceDao<Item> {
         allItems = result;
     }
 
+    /**
+     * @return количество элементов
+     */
     public int getNumber() {
         if (allItems == null) {
             synchronized (ItemDao.class) {

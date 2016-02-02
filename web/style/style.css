@@ -133,6 +133,18 @@ h2 {
     border-top: 1px solid #a6a7d4;
 }
 
+form.profile {
+    margin: 10px 0 30px 0;
+}
+form.profile input, form.profile textarea {
+    margin: 10px 0;
+    display: block;
+}
+form.profile textarea {
+    width:50%;
+    height:50px;
+}
+
 form.signup input {
     margin: 10px 0;
     display: block;

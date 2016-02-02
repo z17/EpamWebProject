@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><lang:message text="login.title"/>и</title>
+    <title><lang:message text="login.title"/></title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/style/normalize.css" type="text/css">
     <link rel="stylesheet" href="/style/style.css" type="text/css">

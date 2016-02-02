@@ -118,7 +118,7 @@ public class ModelOrder {
             return false;
         }
         // todo: вынести отдельно проверку прав, а не так хардкорить
-        return user.getGroupId() == 2;
+        return user.getGroup().getId() == 2;
     }
 
     /**

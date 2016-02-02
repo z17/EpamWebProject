@@ -33,7 +33,7 @@ public class MainServlet extends HttpServlet{
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
         ModelItem model = new ModelItem();
-                // todo что делать со страницами /page/999999999
+
 
         Collection<Item> menu = model.getMenu(url);
         request.setAttribute("menu", menu);

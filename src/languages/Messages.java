@@ -18,7 +18,7 @@ public class Messages {
 
     /**
      * Загружает языковые файлы
-     */
+    */
     public static void reload() {
         ResourceBundle ru = ResourceBundle.getBundle("languages.text", new Locale("ru", "RU"));
         ResourceBundle en = ResourceBundle.getBundle("languages.text", new Locale("en", "US"));
@@ -42,7 +42,7 @@ public class Messages {
             return files.get(locale).getString(message);
         } catch (MissingResourceException e) {
             LOG.warn("Message no found", e);
-            return "";
+            return message;
         }
     }
 

@@ -9,7 +9,10 @@ CREATE TABLE `user` (
   `group_id` int(11) unsigned NOT NULL,  
   `login` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,  
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NULL,
+  `phone` varchar(255) NULL,
+  `address` text NULL,
   FOREIGN KEY (group_id) REFERENCES `group`(id),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><lang:message text="singup.title"/></title>
+    <title><lang:message text="signup.title"/></title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/style/normalize.css" type="text/css">
     <link rel="stylesheet" href="/style/style.css" type="text/css">
@@ -15,16 +15,16 @@
 <div class="wrapper">
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
-        <h1><lang:message text="singup.header"/></h1>
+        <h1><lang:message text="signup.header"/></h1>
         <c:if test="${sessionScope.user == null}">
             <c:forEach var="message" items="${messages}">
-                <p><lang:message text="${'signup.'.concat(message)}"/></p>
+                <p><lang:message text="${'user.'.concat(message)}"/></p>
             </c:forEach>
 
         <form method="POST" class="signup">
-            <input type="text" name="name" placeholder="<lang:message text="signup.name"/>" />
-            <input type="text" name="login" placeholder="<lang:message text="signup.login"/>" />
-            <input type="password" name="password" placeholder="<lang:message text="signup.password" />" />
+            <input type="text" name="name" placeholder="<lang:message text="user.name"/>" />
+            <input type="text" name="login" placeholder="<lang:message text="user.login"/>" />
+            <input type="password" name="password" placeholder="<lang:message text="user.password" />" />
             <input type="submit" name="submit" />
         </form>
         </c:if>

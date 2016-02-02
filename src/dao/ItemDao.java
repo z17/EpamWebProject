@@ -3,8 +3,6 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Item;
-import languages.Languages;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -14,7 +12,7 @@ public class ItemDao implements InterfaceDao<Item> {
     private static final Logger LOG = Logger.getLogger(ItemDao.class);
 
     // кешируем т.к. item нам нужны постоянно.
-    private static LinkedHashMap<Integer, Item> allItems = null;
+    private static LinkedHashMap<Integer, Item> ALL_ITEMS = null;
     private static String TABLE_NAME = "item";
 
     /**
@@ -23,14 +21,14 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     @Override
     public Collection<Item> get() {
-        if (allItems == null) {
+        if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
-                if (allItems == null) {
+                if (ALL_ITEMS == null) {
                     fillingData();
                 }
             }
         }
-        return allItems.values();
+        return ALL_ITEMS.values();
     }
 
     /**
@@ -40,16 +38,16 @@ public class ItemDao implements InterfaceDao<Item> {
      * @return массив или null
      */
     public ArrayList<Item> get(int start, int end) {
-        if (allItems == null) {
+        if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
-                if (allItems == null) {
+                if (ALL_ITEMS == null) {
                     fillingData();
                 }
             }
         }
 
         ArrayList<Item> res = new ArrayList<>();
-        res.addAll(allItems.values());
+        res.addAll(ALL_ITEMS.values());
         if (start > res.size()) {
             return null;
         }
@@ -70,9 +68,9 @@ public class ItemDao implements InterfaceDao<Item> {
      * @return соответствующие элементы
      */
     public Collection<Item> getByArrayId(Collection<Integer> ids) {
-        if (allItems == null) {
+        if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
-                if (allItems == null) {
+                if (ALL_ITEMS == null) {
                     fillingData();
                 }
             }
@@ -80,7 +78,7 @@ public class ItemDao implements InterfaceDao<Item> {
 
         Collection<Item> result = new ArrayList<>();
         for (Integer id: ids) {
-            Item current = allItems.get(id);
+            Item current = ALL_ITEMS.get(id);
             if (current != null) {
                 result.add(current);
             }
@@ -95,14 +93,14 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     @Override
     public Item getById(int id) {
-        if (allItems == null) {
+        if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
-                if (allItems == null) {
+                if (ALL_ITEMS == null) {
                     fillingData();
                 }
             }
         }
-        return allItems.get(id);
+        return ALL_ITEMS.get(id);
     }
 
     /**
@@ -112,7 +110,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     @Override
     public int create(Item item) {
-        allItems = null;
+        ALL_ITEMS = null;
         return 0;
     }
 
@@ -122,7 +120,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     @Override
     public void update(Item item) {
-        allItems = null;
+        ALL_ITEMS = null;
 
     }
 
@@ -132,7 +130,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     @Override
     public void delete(int id) {
-        allItems = null;
+        ALL_ITEMS = null;
 
     }
 
@@ -160,7 +158,7 @@ public class ItemDao implements InterfaceDao<Item> {
     }
 
     /**
-     * Заполняем поле allItems данными из БД для кеширования
+     * Заполняем поле ALL_ITEMS данными из БД для кеширования
      */
     private void fillingData() {
         LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
@@ -177,20 +175,20 @@ public class ItemDao implements InterfaceDao<Item> {
         } catch (SQLException e) {
             LOG.error("connection error", e);
         }
-        allItems = result;
+        ALL_ITEMS = result;
     }
 
     /**
      * @return количество элементов
      */
     public int getNumber() {
-        if (allItems == null) {
+        if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
-                if (allItems == null) {
+                if (ALL_ITEMS == null) {
                     fillingData();
                 }
             }
         }
-        return allItems.size();
+        return ALL_ITEMS.size();
     }
 }

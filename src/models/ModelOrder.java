@@ -117,8 +117,7 @@ public class ModelOrder {
         if (user == null) {
             return false;
         }
-        // todo: вынести отдельно проверку прав, а не так хардкорить
-        return user.getGroup().getId() == 2;
+        return user.isAdminAccess();
     }
 
     /**

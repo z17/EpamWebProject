@@ -16,7 +16,7 @@
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
         <h1><lang:message text="signup.header"/></h1>
-        <c:if test="${sessionScope.user == null}">
+        <c:if test="${sessionScope.userId == null}">
             <c:forEach var="message" items="${messages}">
                 <p><lang:message text="${'user.'.concat(message)}"/></p>
             </c:forEach>
@@ -28,7 +28,7 @@
             <input type="submit" name="submit" />
         </form>
         </c:if>
-        <c:if test="${sessionScope.user != null}">
+        <c:if test="${sessionScope.userId != null}">
             <p><lang:message text="signup.already"/></p>
         </c:if>
     </div>

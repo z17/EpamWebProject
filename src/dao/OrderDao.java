@@ -1,7 +1,6 @@
 package dao;
 
 import cp.ConnectionPool;
-import entity.Item;
 import entity.Order;
 import entity.OrderItem;
 import entity.OrderStatus;
@@ -11,7 +10,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * DAO для заказов
@@ -35,7 +33,14 @@ public class OrderDao implements InterfaceDao<Order> {
      */
     @Override
     public Order getById(int id) {
-        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE id = ? LIMIT 1";
+        String select = "SELECT \n" +
+                "  id,\n" +
+                "  user_id,\n" +
+                "  price,\n" +
+                "  status,\n" +
+                "  time\n" +
+                "FROM `order` \n" +
+                "WHERE id = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
         Order result =  null;
         try (Connection connection = pool.takeConnection();

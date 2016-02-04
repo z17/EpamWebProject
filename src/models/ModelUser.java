@@ -217,7 +217,32 @@ public class ModelUser {
         }
         password = encryptPassword(password);
         return password.equals(encodedPassword);
+    }
+
+    public int getUserIdFromUrl(String url) {
+        String[] path = url.split("/");
+        if (path.length >= 3) {
+            if (path[1].equals("user")) {
+                try {
+                    return Integer.parseInt(path[2]);
+                } catch (NumberFormatException e) {
+                    LOG.warn("error format page number");
+                    return 0;
+                }
+            }
+        }
+        return 0;
+
 
     }
 
+    public User getUserFromUrl(String url) {
+        int id = getUserIdFromUrl(url);
+        UserDao dao = new UserDao();
+        return dao.getById(id);
+    }
+
+    public boolean isUserAccessToProfiles(User user) {
+        return user.isAdminAccess();
+    }
 }

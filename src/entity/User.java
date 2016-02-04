@@ -100,4 +100,8 @@ public class User {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public boolean isAdminAccess() {
+        return getGroup().getId() == 2;
+    }
 }

@@ -19,13 +19,20 @@
         <c:if test="${order != null}">
             <h1><lang:message text="order.order"/> <c:out value="${order.getId()}"/></h1>
             <div class="order" data-id="<c:out value="${order.getId()}"/>">
-                <p><lang:message text="order.date"/>:
-                    <fmt:parseDate value="${order.getTime()}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
-                    <fmt:formatDate value="${parsedDate}" var="stdDatum" type="date" pattern="d.MM.yyyy" />
-                    <c:out value="${stdDatum}" />
-                </p>
-                <p><lang:message text="order.price"/>: <c:out value="${order.getPrice()}"/> р.</p>
-                <p><lang:message text="order.status"/>: <lang:message text="${'order.status-'.concat(order.getStatus())}"/></p>
+                <c:if test="${sessionScope.user.getGroup().getId() == 2}" >
+                    <div class="order-user">
+                        <p><a href="/user/<c:out value="${order.getUserId()}" />"><lang:message text="order-single.user"/></a></p>
+                    </div>
+                </c:if>
+                <div class="order-info">
+                    <p><lang:message text="order.date"/>:
+                        <fmt:parseDate value="${order.getTime()}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                        <fmt:formatDate value="${parsedDate}" var="stdDatum" type="date" pattern="d.MM.yyyy" />
+                        <c:out value="${stdDatum}" />
+                    </p>
+                    <p><lang:message text="order.price"/>: <c:out value="${order.getPrice()}"/> р.</p>
+                    <p><lang:message text="order.status"/>: <lang:message text="${'order.status-'.concat(order.getStatus())}"/></p>
+                </div>
                 <c:if test="${displayActionForm}">
                     <form method="POST">
                         <c:choose>

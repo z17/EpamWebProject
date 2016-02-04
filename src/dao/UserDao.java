@@ -1,11 +1,12 @@
 package dao;
 
 import cp.ConnectionPool;
-import entity.Group;
-import entity.User;
+import entity.*;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserDao implements InterfaceDao<User> {
@@ -27,7 +28,26 @@ public class UserDao implements InterfaceDao<User> {
      */
     @Override
     public User getById(int id) {
-        return null;
+        String select = "SELECT id, name, group_id, login, password, email, phone, address FROM user WHERE id = ? LIMIT 1";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        User result =  null;
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ){
+            ps.setInt(1, id);
+
+            ArrayList<User> users = getUsers(ps);
+            if (users.size() > 0) {
+                result = users.get(0);
+            }
+        } catch (SQLException e) {
+            LOG.error("connection error", e);
+        }
+        return result;
     }
 
     /**
@@ -36,7 +56,7 @@ public class UserDao implements InterfaceDao<User> {
      * @return пользователь или null
      */
     public User getByLogin(String login) {
-        String select = "SELECT user.id, user.name, group_id, login, password, email, phone, address FROM user WHERE login = ? LIMIT 1";
+        String select = "SELECT id, name, group_id, login, password, email, phone, address FROM user WHERE login = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
         User result =  null;
         try (Connection connection = pool.takeConnection();
@@ -48,19 +68,9 @@ public class UserDao implements InterfaceDao<User> {
         ){
             ps.setString(1, login);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    int groupId = rs.getInt("group_id");
-                    String password = rs.getString("password");
-                    String email = rs.getString("email");
-                    String phone = rs.getString("phone");
-                    String address = rs.getString("address");
-                    GroupDao groupDao = new GroupDao();
-                    Group currentGroup = groupDao.getById(groupId);
-                    result = new User(id, name, currentGroup, login, password, email, phone, address);
-                }
+            ArrayList<User> users = getUsers(ps);
+            if (users.size() > 0) {
+                result = users.get(0);
             }
         } catch (SQLException e) {
             LOG.error("connection error", e);
@@ -131,6 +141,33 @@ public class UserDao implements InterfaceDao<User> {
     @Override
     public void delete(int id) {
 
+    }
+
+
+    /**
+     * Заполняет коллекцию объектов из PreparedStatement
+     * @param ps PreparedStatement
+     * @return массив заказов
+     * @throws SQLException
+     */
+    private ArrayList<User> getUsers(PreparedStatement ps) throws SQLException {
+        ArrayList<User> result = new ArrayList<>();
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String login = rs.getString("login");
+                int groupId = rs.getInt("group_id");
+                String password = rs.getString("password");
+                String email = rs.getString("email");
+                String phone = rs.getString("phone");
+                String address = rs.getString("address");
+                GroupDao groupDao = new GroupDao();
+                Group group = groupDao.getById(groupId);
+                result.add(new User(id, name, group, login,password, email,phone,address));
+            }
+        }
+        return result;
     }
 
 }

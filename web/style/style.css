@@ -173,6 +173,11 @@ form.signup input {
 .order p {
     margin: 5px 0;
 }
+.order-user {
+    float:right;
+    margin-right: 50px;
+
+}
 
 .pages {
     margin: 15px 0;

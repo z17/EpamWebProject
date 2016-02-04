@@ -32,7 +32,6 @@ public class ProfileServlet extends HttpServlet {
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession(true);
         User currentUser = (User)session.getAttribute("user");
-        System.out.println(currentUser );
         if (currentUser == null) {
             response.sendRedirect("/login");
             return;

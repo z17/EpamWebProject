@@ -38,10 +38,6 @@ $(".js-order-item-less").click(function () {
     var $orderCount = $('.js-order-count');
     var countOrder = $orderCount.data('count');
     if (typeof countOrder == 'undefined') {
-        count = 0;
-    }
-    countOrder--;
-    if (countOrder < 0) {
         countOrder = 0;
     }
 
@@ -56,10 +52,12 @@ $(".js-order-item-less").click(function () {
         menuOrder = decodeOrder(order);
     }
 
-    if (!typeof menuOrder["id" + id] == 'undefined') {
-        menuOrder["id" + id]--;
-        if (menuOrder["id" + id] < 0) {
-            menuOrder["id" + id] = 0;
+    if (typeof menuOrder["id" + id] != 'undefined') {
+        if (menuOrder["id" + id] >= 1) {
+            countOrder--;
+            menuOrder["id" + id]--;
+            $orderCount.data('count', countOrder);
+            $orderCount.text("(" + countOrder + ")");
         }
     }
 

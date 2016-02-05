@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Авторизация
+ * Страница пользователя
  */
 @WebServlet("/user/*")
 public class UserServlet extends HttpServlet {

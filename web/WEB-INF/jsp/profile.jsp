@@ -15,16 +15,16 @@
 <div class="wrapper">
     <%@ include file="tmp/header.jsp" %>
     <div class="middle">
-        <h1><lang:message text="profile.header"/> <c:out value="${sessionScope.userId.getLogin()}" /></h1>
+        <h1><lang:message text="profile.header"/> <c:out value="${sessionScope.user.getLogin()}" /></h1>
         <c:forEach var="message" items="${messages}">
             <p><lang:message text="${'user.'.concat(message)}"/></p>
         </c:forEach>
         <h2><lang:message text="profile.change-info"/></h2>
         <form method="POST" class="profile">
-            <input type="text" name="name" placeholder="<lang:message text="user.name"/>" value="<c:out value="${sessionScope.userId.getName()}" />" />
-            <input type="text" name="email" placeholder="<lang:message text="user.email"/>" value="<c:out value="${sessionScope.userId.getEmail()}" />" />
-            <input type="text" name="phone" placeholder="<lang:message text="user.phone"/>" value="<c:out value="${sessionScope.userId.getPhone()}" />" />
-            <textarea type="text" name="address" placeholder="<lang:message text="user.address"/>"><c:out value="${sessionScope.userId.getAddress()}" /></textarea>
+            <input type="text" name="name" placeholder="<lang:message text="user.name"/>" value="<c:out value="${sessionScope.user.getName()}" />" />
+            <input type="text" name="email" placeholder="<lang:message text="user.email"/>" value="<c:out value="${sessionScope.user.getEmail()}" />" />
+            <input type="text" name="phone" placeholder="<lang:message text="user.phone"/>" value="<c:out value="${sessionScope.user.getPhone()}" />" />
+            <textarea type="text" name="address" placeholder="<lang:message text="user.address"/>"><c:out value="${sessionScope.user.getAddress()}" /></textarea>
             <input type="submit" name="submit-info" />
         </form>
         <h2><lang:message text="profile.change-password"/></h2>

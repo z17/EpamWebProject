@@ -101,6 +101,10 @@ public class User {
         this.address = address;
     }
 
+    /**
+     * Опреледяет имеет ли пользователь админ права
+     * @return статус доступа
+     */
     public boolean isAdminAccess() {
         return getGroup().getId() == 2;
     }

@@ -11,7 +11,6 @@ import java.util.Collection;
 
 public class UserDao implements InterfaceDao<User> {
     private static final Logger LOG = Logger.getLogger(UserDao.class);
-    static String TABLE_NAME = "user";
 
     /**
      * @return Списоз пользователей
@@ -27,7 +26,7 @@ public class UserDao implements InterfaceDao<User> {
      * @return пользователь
      */
     @Override
-    public User getById(int id) {
+    public User getById(final int id) {
         String select = "SELECT id, name, group_id, login, password, email, phone, address FROM user WHERE id = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
         User result =  null;
@@ -55,7 +54,7 @@ public class UserDao implements InterfaceDao<User> {
      * @param login пользователя
      * @return пользователь или null
      */
-    public User getByLogin(String login) {
+    public User getByLogin(final String login) {
         String select = "SELECT id, name, group_id, login, password, email, phone, address FROM user WHERE login = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
         User result =  null;
@@ -84,9 +83,9 @@ public class UserDao implements InterfaceDao<User> {
      * @return id нового пользователя
      */
     @Override
-    public int create(User item) {
+    public int create(final User item) {
         int newId = 0;
-        String insert = "INSERT INTO " + TABLE_NAME + " (name, group_id, login, password) VALUES (?, ?, ?, ?)";
+        String insert = "INSERT INTO user (name, group_id, login, password) VALUES (?, ?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
             PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
@@ -113,7 +112,7 @@ public class UserDao implements InterfaceDao<User> {
      * @param item пользователь
      */
     @Override
-    public void update(User item) {
+    public void update(final User item) {
         String update = "UPDATE user set group_id = ?, login = ?, password = ?, name = ?, email = ?, phone = ?, address = ? WHERE id = ?";
 
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -139,7 +138,7 @@ public class UserDao implements InterfaceDao<User> {
      * @param id пользователя
      */
     @Override
-    public void delete(int id) {
+    public void delete(final int id) {
 
     }
 

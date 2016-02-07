@@ -12,21 +12,20 @@ import java.util.Map;
 public class OrderItemDao implements InterfaceDao<OrderItem> {
     private static final Logger LOG = Logger.getLogger(OrderItemDao.class);
 
-    private static String TABLE_NAME = "order_item";
     @Override
     public Collection<OrderItem> get() {
         return null;
     }
 
     @Override
-    public OrderItem getById(int id) {
+    public OrderItem getById(final int id) {
         return null;
     }
 
     @Override
     public int create(OrderItem item) {
         int newId = 0;
-        String insert = "INSERT INTO " + TABLE_NAME + " (order_id, item_id, count) VALUES (?, ?, ?)";
+        String insert = "INSERT INTO order_item (order_id, item_id, count) VALUES (?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
             PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
@@ -48,17 +47,17 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
     }
 
     @Override
-    public void update(OrderItem item) {
+    public void update(final OrderItem item) {
 
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(final int id) {
 
     }
 
     public ArrayList<OrderItem> getByOrderId(int orderId) {
-        String select = "SELECT id, item_id, count FROM " + TABLE_NAME + " WHERE order_id = ?";
+        String select = "SELECT id, item_id, count FROM order_item WHERE order_id = ?";
         ArrayList<OrderItem> result = null;
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
@@ -85,8 +84,8 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
         return result;
     }
 
-    public void deleteByOrderId(int orderId) {
-        String delete = "DELETE FROM " + TABLE_NAME + " WHERE order_id = ?";
+    public void deleteByOrderId(final int orderId) {
+        String delete = "DELETE FROM order_item WHERE order_id = ?";
         ConnectionPool pool = ConnectionPool.getInstance();
 
         try(Connection connection = pool.takeConnection();

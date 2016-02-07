@@ -1,6 +1,7 @@
 package servlets;
 
 import org.apache.log4j.Logger;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,7 +14,7 @@ import java.io.IOException;
 /**
  * Ошибка доступа
  */
-@WebServlet("/error-access")
+@WebServlet(Constants.PAGE_ERROR_ACCESS_URL)
 public class ErrorAccessServlet extends HttpServlet{
     private static final Logger LOG = Logger.getLogger(ErrorAccessServlet.class);
     @Override

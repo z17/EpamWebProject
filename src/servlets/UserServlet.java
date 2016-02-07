@@ -2,6 +2,7 @@ package servlets;
 
 import entity.User;
 import models.ModelUser;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -28,18 +29,17 @@ public class UserServlet extends HttpServlet {
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // todo выделить всюду /error-access и /error-404 в константы
         HttpSession session = request.getSession(true);
         ModelUser model = new ModelUser();
         User user = (User)session.getAttribute("user");
         if (user == null || !model.isUserAccessToProfiles(user)) {
-            response.sendRedirect("/error-access");
+            response.sendRedirect(Constants.PAGE_ERROR_ACCESS_URL);
             return;
         }
 
         User userProfile = model.getUserFromUrl(request.getRequestURI());
         if (userProfile == null) {
-            response.sendRedirect("/error-404");
+            response.sendRedirect(Constants.PAGE_ERROR_404_URL);
             return;
         }
 

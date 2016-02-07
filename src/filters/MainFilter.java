@@ -1,8 +1,10 @@
 package filters;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import languages.Languages;
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
+import settings.Constants;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -16,8 +18,6 @@ import java.io.IOException;
 @WebFilter(urlPatterns = "*")
 public class MainFilter implements Filter {
     private static final Logger LOG = Logger.getLogger(MainFilter.class);
-    private static final String TYPE = "text/html";
-    private static final String ENCODING = "UTF-8";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -25,10 +25,10 @@ public class MainFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        servletResponse.setContentType(TYPE);
-        servletRequest.setCharacterEncoding(ENCODING);
-        servletResponse.setContentType(TYPE);
-        servletResponse.setCharacterEncoding(ENCODING);
+        servletResponse.setContentType(Constants.CONTENT_TYPE);
+        servletRequest.setCharacterEncoding(Constants.CONTENT_ENCODING);
+        servletResponse.setContentType(Constants.CONTENT_TYPE);
+        servletResponse.setCharacterEncoding(Constants.CONTENT_ENCODING);
 
         HttpSession session = ((HttpServletRequest) servletRequest).getSession(true);
         String langParam = servletRequest.getParameter("lang");
@@ -47,13 +47,12 @@ public class MainFilter implements Filter {
                     break;
             }
             LOG.info("change language to " + lang);
-            // todo: заменить language на константу тут и в теге
-            session.setAttribute("language", lang);
+            session.setAttribute(Constants.SESSION_LANGUAGE_PARAM, lang);
         } else {
-            Languages currentLang = (Languages) session.getAttribute("language");
+            Languages currentLang = (Languages) session.getAttribute(Constants.SESSION_LANGUAGE_PARAM);
             if (currentLang == null) {
                 LOG.info("set default language");
-                session.setAttribute("language", Languages.RU);
+                session.setAttribute(Constants.SESSION_LANGUAGE_PARAM, Languages.RU);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

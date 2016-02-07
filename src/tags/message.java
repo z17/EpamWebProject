@@ -3,6 +3,7 @@ package tags;
 import languages.Languages;
 import languages.Messages;
 import org.apache.log4j.Logger;
+import settings.Constants;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
@@ -28,7 +29,7 @@ public class Message extends TagSupport {
     public int doStartTag() {
         JspWriter out = pageContext.getOut();
         HttpSession session = pageContext.getSession();
-        Languages locale = (Languages)session.getAttribute("language");
+        Languages locale = (Languages)session.getAttribute(Constants.SESSION_LANGUAGE_PARAM);
 
         try {
             out.print(Messages.getMessage(text, locale));

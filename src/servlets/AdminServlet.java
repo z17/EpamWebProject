@@ -3,6 +3,7 @@ package servlets;
 import entity.Order;
 import entity.User;
 import models.ModelOrder;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -37,7 +38,7 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         User user = (User)session.getAttribute("user");
         if (!model.isAdminAccessAllowed(user)) {
-            response.sendRedirect("/error-access");
+            response.sendRedirect(Constants.PAGE_ERROR_ACCESS_URL);
             return;
         }
 

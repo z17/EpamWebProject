@@ -6,6 +6,7 @@ import entity.Group;
 import entity.User;
 import models.messages.UserMessages;
 import org.apache.log4j.Logger;
+import settings.Constants;
 import settings.ProjectSetting;
 
 import java.io.UnsupportedEncodingException;
@@ -18,16 +19,12 @@ import java.util.ArrayList;
  */
 public class ModelUser {
     private static final Logger LOG = Logger.getLogger(ModelUser.class);
-    private static int PASSWORD_LENGTH_MIN = 5;
-    private static int PASSWORD_LENGTH_MAX = 15;
-    private static Group DEFAULT_GROUP;
-    private static int DEFAULT_GROUP_ID = 1;
-    private static String SETTINGS_SALT = "auth.salt";
+    private static final Group DEFAULT_GROUP;
 
     // получаем объект с дефолтной группой
     static {
         GroupDao groupDao = new GroupDao();
-        DEFAULT_GROUP = groupDao.getById(DEFAULT_GROUP_ID);
+        DEFAULT_GROUP = groupDao.getById(Constants.DEFAULT_GROUP_ID);
     }
 
     /**
@@ -37,14 +34,17 @@ public class ModelUser {
      * @param password пароль
      * @return ошибки создания или CORRECT_SIGNUP
      */
-    public ArrayList<UserMessages> createUser(String name, String login, String password) {
+    public ArrayList<UserMessages> createUser(final String name, final String login, final String password) {
         ArrayList<UserMessages> validate = validateSignupUserData(name, login, password);
         if (validate.get(0) == UserMessages.CORRECT_SIGNUP) {
-            // todo обработать ситуацию, когда пароль не зашифрован (null)
-            password = encryptPassword(password);
-            User user = new User(name, DEFAULT_GROUP, login, password);
-            UserDao dao = new UserDao();
-            dao.create(user);
+            String encodedPassword = encryptPassword(password);
+            if (encodedPassword != null) {
+                User user = new User(name, DEFAULT_GROUP, login, encodedPassword);
+                UserDao dao = new UserDao();
+                dao.create(user);
+            } else {
+                validate.add(UserMessages.UNKNOWN_ERROR);
+            }
         }
 
         return validate;
@@ -56,7 +56,7 @@ public class ModelUser {
      * @param password пароль
      * @return null или объект пользователя
      */
-    public User login(String login, String password) {
+    public User login(final String login, final String password) {
         if (login == null || password == null) {
             return null;
         }
@@ -83,7 +83,7 @@ public class ModelUser {
      * @param address Адрес
      * @return Ошибки обновления или CORRECT_UPDATE
      */
-    public ArrayList<UserMessages> updateUserInfo(User user, String name, String email, String phone, String address) {
+    public ArrayList<UserMessages> updateUserInfo(final User user, final String name, final String email, final String phone, final String address) {
         ArrayList<UserMessages> validate = new ArrayList<>();
         if (user == null) {
             validate.add(UserMessages.UNKNOWN_ERROR);
@@ -111,7 +111,7 @@ public class ModelUser {
      * @param confirmPassword подтверждение пароля
      * @return ошибки пароля или CORRECT_UPDATE
      */
-    public ArrayList<UserMessages> updateUserPassword(User user, String password, String newPassword, String confirmPassword) {
+    public ArrayList<UserMessages> updateUserPassword(final User user, final String password, final String newPassword, final String confirmPassword) {
         ArrayList<UserMessages> validate = new ArrayList<>();
         if (user == null) {
             validate.add(UserMessages.UNKNOWN_ERROR );
@@ -125,15 +125,20 @@ public class ModelUser {
             if (!isValidPassword(newPassword)) {
                 validate.add(UserMessages.PASSWORD_INCORRECT);
             } else if (!newPassword.equals(confirmPassword)) {
-                validate.add(UserMessages.PASSWORD_NOT_MUTCH);
+                validate.add(UserMessages.PASSWORD_NOT_MATCH);
             }
         }
 
         if (validate.size() == 0) {
             UserDao dao = new UserDao();
-            user.setPassword(encryptPassword(newPassword));
-            dao.update(user);
-            validate.add(UserMessages.CORRECT_UPDATE);
+            String newEncodedPassword = encryptPassword(newPassword);
+            if (newEncodedPassword != null) {
+                user.setPassword(newEncodedPassword);
+                dao.update(user);
+                validate.add(UserMessages.CORRECT_UPDATE);
+            } else {
+                validate.add(UserMessages.UNKNOWN_ERROR);
+            }
         }
         return validate;
     }
@@ -145,7 +150,7 @@ public class ModelUser {
      * @param password пароль
      * @return сообщения об ошибке или CORRECT_SIGNUP
      */
-    private ArrayList<UserMessages> validateSignupUserData(String name, String login, String password) {
+    private ArrayList<UserMessages> validateSignupUserData(final String name, final String login, final String password) {
         ArrayList<UserMessages> validate = new ArrayList<>();
 
         if (name == null || name.length() == 0) {
@@ -178,8 +183,8 @@ public class ModelUser {
      * @param password пароль
      * @return bool
      */
-    private boolean isValidPassword(String password) {
-        return !(password.length() < PASSWORD_LENGTH_MIN || password.length() > PASSWORD_LENGTH_MAX);
+    private boolean isValidPassword(final String password) {
+        return !(password.length() < Constants.PASSWORD_LENGTH_MIN || password.length() > Constants.PASSWORD_LENGTH_MAX);
     }
 
     /**
@@ -187,12 +192,11 @@ public class ModelUser {
      * @param password пароль
      * @return закодированный пароль
      */
-    private String encryptPassword(String password) {
+    private String encryptPassword(final String password) {
         try {
-            ProjectSetting setting = ProjectSetting.getInstance();
-            password = password + setting.getValue(SETTINGS_SALT);
+            String passwordWithSalt = password + Constants.PASSWORD_SALT;
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(password.getBytes("UTF-8")); // Change this to "UTF-16" if neede
+            md.update(passwordWithSalt.getBytes("UTF-8")); // Change this to "UTF-16" if neede
             byte[] digest = md.digest();
             StringBuilder sb = new StringBuilder();
             for (byte aDigest : digest) {
@@ -211,15 +215,14 @@ public class ModelUser {
      * @param encodedPassword закодированный пароль
      * @return bool
      */
-    private boolean verifyPassword(String password, String encodedPassword) {
+    private boolean verifyPassword(final String password, final String encodedPassword) {
         if (password == null || encodedPassword == null) {
             return false;
         }
-        password = encryptPassword(password);
-        return password.equals(encodedPassword);
+        return encodedPassword.equals(encryptPassword(password));
     }
 
-    public int getUserIdFromUrl(String url) {
+    public int getUserIdFromUrl(final String url) {
         String[] path = url.split("/");
         if (path.length >= 3) {
             if (path[1].equals("user")) {
@@ -236,13 +239,13 @@ public class ModelUser {
 
     }
 
-    public User getUserFromUrl(String url) {
+    public User getUserFromUrl(final String url) {
         int id = getUserIdFromUrl(url);
         UserDao dao = new UserDao();
         return dao.getById(id);
     }
 
-    public boolean isUserAccessToProfiles(User user) {
+    public boolean isUserAccessToProfiles(final User user) {
         return user.isAdminAccess();
     }
 }

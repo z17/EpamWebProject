@@ -5,8 +5,8 @@ import java.util.Map;
 
 public interface InterfaceDao<T> {
     Collection <T> get();
-    T getById(int id);
-    int create(T item);
-    void update(T item);
-    void delete(int id);
+    T getById(final int id);
+    int create(final T item);
+    void update(final T item);
+    void delete(final int id);
 }

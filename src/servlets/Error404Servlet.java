@@ -1,6 +1,7 @@
 package servlets;
 
 import org.apache.log4j.Logger;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,7 +14,7 @@ import java.io.IOException;
 /**
  * 404 ошибка
  */
-@WebServlet("/error-404")
+@WebServlet(Constants.PAGE_ERROR_404_URL)
 public class Error404Servlet extends HttpServlet{
     private static final Logger LOG = Logger.getLogger(Error404Servlet.class);
 

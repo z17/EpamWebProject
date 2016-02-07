@@ -15,16 +15,17 @@ import java.util.regex.Pattern;
 /**
  * Модель, отвечающая за работу с заказами
  */
+// todo: переделать ACTIONS на стратегию или что-то типа того.
 public class ModelOrder {
     private static final Logger LOG = Logger.getLogger(ModelOrder.class);
-    private static String[] ACTIONS = {"executed", "delete", "ready", "close"};
+    private static final String[] ACTIONS = {"executed", "delete", "ready", "close"};
 
     /**
      * Получает текущее состояние корзины
      * @param orderCookieValue строка вида id[id элемента]=[количество]
      * @return Ассоциативный массив элемент => количество
      */
-    public Map<Item, Integer> getCurrentOrder(String orderCookieValue) {
+    public Map<Item, Integer> getCurrentOrder(final String orderCookieValue) {
         HashMap<Integer, Integer> itemsId = parseOrderCookie(orderCookieValue);
         ItemDao itemDao = new ItemDao();
         Collection<Item> items = itemDao.getByArrayId(itemsId.keySet());
@@ -40,7 +41,7 @@ public class ModelOrder {
      * @param user пользователь, который создаёт
      * @param items его заказ вида элемент => количество
      */
-    public void createOrder(User user, Map<Item, Integer> items) {
+    public void createOrder(final User user, final Map<Item, Integer> items) {
         OrderDao orderDao = new OrderDao();
         int price = 0;
         LocalDateTime time = LocalDateTime.now();
@@ -60,7 +61,7 @@ public class ModelOrder {
      * @param user пользователь
      * @return список заказов
      */
-    public ArrayList<Order> getUserOrders(User user) {
+    public ArrayList<Order> getUserOrders(final User user) {
         OrderDao orderDao = new OrderDao();
         return orderDao.getByUserId(user.getId());
     }
@@ -83,7 +84,7 @@ public class ModelOrder {
      * @param requestURI url вида /order/[0-9]*
      * @return id заказа или 0
      */
-    public int getOrderIdFromUrl(String requestURI) {
+    public int getOrderIdFromUrl(final String requestURI) {
         String[] path = requestURI.split("/");
         if (path.length >= 3) {
             if (path[1].equals("order")) {
@@ -103,7 +104,7 @@ public class ModelOrder {
      * @param orderId id заказа
      * @return заказ
      */
-    public Order getOrderById(int orderId) {
+    public Order getOrderById(final int orderId) {
         OrderDao dao = new OrderDao();
         return dao.getById(orderId);
     }
@@ -113,7 +114,7 @@ public class ModelOrder {
      * @param user пользователь
      * @return true or false
      */
-    public boolean isAdminAccessAllowed(User user) {
+    public boolean isAdminAccessAllowed(final User user) {
         if (user == null) {
             return false;
         }
@@ -126,7 +127,7 @@ public class ModelOrder {
      * @param user пользователь
      * @return true or false
      */
-    public boolean isOrderAccessAllowed(Order order, User user) {
+    public boolean isOrderAccessAllowed(final Order order, User user) {
         if (order == null || user == null) {
             return false;
         }
@@ -140,7 +141,7 @@ public class ModelOrder {
      * @param order заказ
      * @return возвращает изменённый заказ (или null в случае удаления)
      */
-    public Order doAction(String action, User user, Order order) {
+    public Order doAction(final String action, final User user, final Order order) {
         // корректность данных
         if (order == null || !isValidAction(action)) {
             return order;
@@ -175,7 +176,7 @@ public class ModelOrder {
      * Поменаем счёт оплаченным
      * @param order заказ, для которого закрывает счёт
      */
-    private void paidBill(Order order) {
+    private void paidBill(final Order order) {
         BillDao dao = new BillDao();
         Bill bill = dao.getByOrderId(order.getId());
         bill.setPaid(true);
@@ -186,7 +187,7 @@ public class ModelOrder {
      * Создаём счет для заказа
      * @param order заказ
      */
-    private void createBill(Order order) {
+    private void createBill(final Order order) {
         BillDao dao = new BillDao();
         dao.create(new Bill(order.getId(), false, order.getPrice()));
     }
@@ -196,7 +197,7 @@ public class ModelOrder {
      * @param action действие
      * @return true или false
      */
-    private boolean isValidAction(String action) {
+    private boolean isValidAction(final String action) {
         return Arrays.asList(ACTIONS).contains(action);
     }
 
@@ -206,7 +207,7 @@ public class ModelOrder {
      * @param action действие
      * @return true or false
      */
-    private boolean isActionAllow(Order order, String action) {
+    private boolean isActionAllow(final Order order, final String action) {
         // статусы могут меняться
         // с нового заказа на выполнение (или удалить заказ)
         if (order.getStatus() == OrderStatus.NEW && (action.equals("executed") || action.equals("delete"))) {
@@ -230,7 +231,7 @@ public class ModelOrder {
      * @return Карта вида id => количество
      */
     // благодаря тому, что json в куках java не видит, нам приходится так извращаться
-    private HashMap<Integer, Integer> parseOrderCookie(String cookie) {
+    private HashMap<Integer, Integer> parseOrderCookie(final String cookie) {
 
         HashMap<Integer, Integer> result = new HashMap<>();
 

@@ -15,7 +15,6 @@ import java.util.Collection;
  * DAO для заказов
  */
 public class OrderDao implements InterfaceDao<Order> {
-    private static String TABLE_NAME = "`order`";
 
     /**
      * Возвращает все заказы
@@ -32,7 +31,7 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return заказ
      */
     @Override
-    public Order getById(int id) {
+    public Order getById(final int id) {
         String select = "SELECT \n" +
                 "  id,\n" +
                 "  user_id,\n" +
@@ -67,8 +66,8 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return id заказа в БД
      */
     @Override
-    public int create(Order item) {
-        String insert = "INSERT INTO " + TABLE_NAME + " (user_id, price, status, time) VALUES (?, ?, ?, ?)";
+    public int create(final Order item) {
+        String insert = "INSERT INTO `order` (user_id, price, status, time) VALUES (?, ?, ?, ?)";
         int newId = 0;
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -98,8 +97,8 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param item заказ
      */
     @Override
-    public void update(Order item) {
-        String update = "UPDATE "+TABLE_NAME+" set user_id = ?, price = ?, status = ?, time = ? WHERE id = ?";
+    public void update(final Order item) {
+        String update = "UPDATE `order` set user_id = ?, price = ?, status = ?, time = ? WHERE id = ?";
 
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -121,13 +120,13 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param id записи
      */
     @Override
-    public void delete(int id) {
+    public void delete(final int id) {
         // удаляем связи
         OrderItemDao dao = new OrderItemDao();
         dao.deleteByOrderId(id);
 
         // удаляем сам заказ
-        String delete = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+        String delete = "DELETE FROM `order` WHERE id = ?";
         ConnectionPool pool = ConnectionPool.getInstance();
 
         try(Connection connection = pool.takeConnection();
@@ -145,8 +144,8 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param id заказа
      * @return список заказов
      */
-    public ArrayList<Order> getByUserId(int id) {
-        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE user_id = ? ORDER BY id DESC";
+    public ArrayList<Order> getByUserId(final int id) {
+        String select = "SELECT id, user_id, price, status, time FROM `order` WHERE user_id = ? ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
         ArrayList<Order> result =  null;
         try (Connection connection = pool.takeConnection();
@@ -169,11 +168,11 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param listStatus колелкция статусов
      * @return список заказов
      */
-    public ArrayList<Order> getOrderByStatusArray(Collection<OrderStatus> listStatus) {
+    public ArrayList<Order> getOrderByStatusArray(final Collection<OrderStatus> listStatus) {
         ArrayList<Integer> listStatusId = new ArrayList<>();
         listStatus.stream().forEach((item) -> listStatusId.add(item.getValue()));
         String statusStr = StringUtils.join(listStatusId, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
-        String select = "SELECT id, user_id, price, status, time FROM " + TABLE_NAME + " WHERE status in ("+statusStr+") ORDER BY id DESC";
+        String select = "SELECT id, user_id, price, status, time FROM `order` WHERE status in ("+statusStr+") ORDER BY id DESC";
 
         ConnectionPool pool = ConnectionPool.getInstance();
         ArrayList<Order> result =  null;
@@ -197,7 +196,7 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return массив заказов
      * @throws SQLException
      */
-    private ArrayList<Order> getOrders(PreparedStatement ps) throws SQLException {
+    private ArrayList<Order> getOrders(final PreparedStatement ps) throws SQLException {
         ArrayList<Order> result = new ArrayList<>();
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

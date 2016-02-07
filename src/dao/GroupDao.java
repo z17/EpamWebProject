@@ -28,6 +28,33 @@ public class GroupDao implements InterfaceDao<Group> {
         return ALL_GROUPS.values();
     }
 
+    @Override
+    public Group getById(final int id) {
+        if (ALL_GROUPS == null) {
+            synchronized (GroupDao.class) {
+                if (ALL_GROUPS == null) {
+                    fillingData();
+                }
+            }
+        }
+        return ALL_GROUPS.get(id);
+    }
+
+    @Override
+    public int create(final Group item) {
+        return 0;
+    }
+
+    @Override
+    public void update(final Group item) {
+
+    }
+
+    @Override
+    public void delete(final int id) {
+
+    }
+
     private void fillingData() {
         ALL_GROUPS = new LinkedHashMap<>();
         String select = "SELECT id, name FROM `group` ORDER BY id DESC";
@@ -51,30 +78,4 @@ public class GroupDao implements InterfaceDao<Group> {
         }
     }
 
-    @Override
-    public Group getById(int id) {
-        if (ALL_GROUPS == null) {
-            synchronized (GroupDao.class) {
-                if (ALL_GROUPS == null) {
-                    fillingData();
-                }
-            }
-        }
-        return ALL_GROUPS.get(id);
-    }
-
-    @Override
-    public int create(Group item) {
-        return 0;
-    }
-
-    @Override
-    public void update(Group item) {
-
-    }
-
-    @Override
-    public void delete(int id) {
-
-    }
 }

@@ -1,6 +1,8 @@
 package languages;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import org.apache.log4j.Logger;
+import settings.Constants;
 
 import java.util.*;
 
@@ -9,7 +11,6 @@ import java.util.*;
  */
 public class Messages {
     private static final Logger LOG = Logger.getLogger(Messages.class);
-    private static Languages DEFAULT_LOCALE = Languages.RU;
     private static Map<Languages, ResourceBundle> files = new HashMap<>();
 
     static {
@@ -33,15 +34,15 @@ public class Messages {
      * @param locale локаль
      * @return сообщение в заданном языке или пустую строку
      */
-    public static String getMessage(String message, Languages locale) {
+    public static String getMessage(final String message, final Languages locale) {
         try {
             if (locale == null) {
                 LOG.warn("null locale");
-                return files.get(DEFAULT_LOCALE).getString(message);
+                return files.get(Constants.DEFAULT_LOCALE).getString(message);
             }
             return files.get(locale).getString(message);
         } catch (MissingResourceException e) {
-            LOG.warn("Message no found", e);
+            LOG.warn("Message not found", e);
             return message;
         }
     }
@@ -51,7 +52,7 @@ public class Messages {
      * @param message ключ сообщения
      * @return сообщение или пустая строка
      */
-    public static String getMessage(String message) {
+    public static String getMessage(final String message) {
         return getMessage(message, null);
     }
 }

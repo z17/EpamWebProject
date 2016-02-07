@@ -3,6 +3,7 @@ package servlets;
 import entity.Item;
 import models.ModelItem;
 import org.apache.log4j.Logger;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,7 +40,7 @@ public class MainServlet extends HttpServlet{
         request.setAttribute("menu", menu);
         if (menu == null) {
             LOG.warn("error number of page");
-            response.sendRedirect("/error-404");
+            response.sendRedirect(Constants.PAGE_ERROR_404_URL);
             return;
         }
 

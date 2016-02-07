@@ -1,24 +1,21 @@
 package models;
 
+import cp.ConnectionPool;
 import dao.ItemDao;
 import entity.Item;
 import org.apache.log4j.Logger;
+import settings.Constants;
 import settings.ProjectSetting;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Модель для обработки действий с элементами меню
  */
-// todo: вынести кол-во элементов на странице в статическое поле и инициализировать его
 public class ModelItem {
     private static final Logger LOG = Logger.getLogger(ModelItem.class);
 
-    private static String PAGE_PREFIX = "/page/";
     private static String SETTINGS_ITEMS_PER_PAGE = "pages.items_per_page";
-    private static int DEFAULT_ITEMS_PER_PAGE = 5;
 
     /**
      * Получает все элементы меню
@@ -34,7 +31,7 @@ public class ModelItem {
      * @param url вида /page/[0-9]*, иначе возвращается контент первой страницы
      * @return меню
      */
-    public Collection<Item> getMenu(String url) {
+    public Collection<Item> getMenu(final String url) {
         int page = getPageNumber(url);
         ProjectSetting setting = ProjectSetting.getInstance();
         int itemsPerPage;
@@ -42,7 +39,7 @@ public class ModelItem {
             itemsPerPage = Integer.parseInt(setting.getValue(SETTINGS_ITEMS_PER_PAGE));
         } catch (NumberFormatException e) {
             LOG.error("error format items per page");
-            itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
+            itemsPerPage = Constants.DEFAULT_ITEMS_PER_PAGE;
         }
         int startItem = itemsPerPage * (page - 1) + 1;
         int endItem = itemsPerPage * page + 1;
@@ -56,11 +53,11 @@ public class ModelItem {
      * @param url  вида /page/[0-9]*, иначе возвращается единица
      * @return номер страницы
      */
-    public int getPageNumber(String url) {
-        if (!url.contains(PAGE_PREFIX)) {
+    public int getPageNumber(final String url) {
+        if (!url.contains(Constants.PAGE_PREFIX)) {
             return 1;
         }
-        String numberStr = url.substring(PAGE_PREFIX.length());
+        String numberStr = url.substring(Constants.PAGE_PREFIX.length());
 
         int pageNumber;
 
@@ -92,7 +89,7 @@ public class ModelItem {
             itemsPerPage = Integer.parseInt(setting.getValue(SETTINGS_ITEMS_PER_PAGE));
         } catch (NumberFormatException e) {
             LOG.error("error format items per page");
-            itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
+            itemsPerPage = Constants.DEFAULT_ITEMS_PER_PAGE;
         }
         return (int)Math.ceil((double)count / itemsPerPage);
     }

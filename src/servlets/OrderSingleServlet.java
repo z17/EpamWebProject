@@ -5,6 +5,7 @@ import entity.Bill;
 import entity.Order;
 import entity.User;
 import models.ModelOrder;
+import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -41,12 +42,12 @@ public class OrderSingleServlet extends HttpServlet {
         }
 
         if (order == null) {
-            response.sendRedirect("/error-404");
+            response.sendRedirect(Constants.PAGE_ERROR_404_URL);
             return;
         }
 
         if (!model.isOrderAccessAllowed(order, user)) {
-            response.sendRedirect("/error-access");
+            response.sendRedirect(Constants.PAGE_ERROR_ACCESS_URL);
             return;
         }
 

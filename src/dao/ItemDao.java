@@ -67,7 +67,7 @@ public class ItemDao implements InterfaceDao<Item> {
      * @param ids массив id
      * @return соответствующие элементы
      */
-    public Collection<Item> getByArrayId(Collection<Integer> ids) {
+    public Collection<Item> getByArrayId(final Collection<Integer> ids) {
         if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
                 if (ALL_ITEMS == null) {
@@ -92,7 +92,7 @@ public class ItemDao implements InterfaceDao<Item> {
      * @return элемент
      */
     @Override
-    public Item getById(int id) {
+    public Item getById(final int id) {
         if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
                 if (ALL_ITEMS == null) {
@@ -109,7 +109,7 @@ public class ItemDao implements InterfaceDao<Item> {
      * @return id добавленного
      */
     @Override
-    public int create(Item item) {
+    public int create(final Item item) {
         ALL_ITEMS = null;
         return 0;
     }
@@ -119,7 +119,7 @@ public class ItemDao implements InterfaceDao<Item> {
      * @param item обновляемый элемент
      */
     @Override
-    public void update(Item item) {
+    public void update(final Item item) {
         ALL_ITEMS = null;
 
     }
@@ -129,7 +129,7 @@ public class ItemDao implements InterfaceDao<Item> {
      * @param id удаляемого
      */
     @Override
-    public void delete(int id) {
+    public void delete(final int id) {
         ALL_ITEMS = null;
 
     }
@@ -158,11 +158,25 @@ public class ItemDao implements InterfaceDao<Item> {
     }
 
     /**
+     * @return количество элементов
+     */
+    public int getNumber() {
+        if (ALL_ITEMS == null) {
+            synchronized (ItemDao.class) {
+                if (ALL_ITEMS == null) {
+                    fillingData();
+                }
+            }
+        }
+        return ALL_ITEMS.size();
+    }
+
+    /**
      * Заполняем поле ALL_ITEMS данными из БД для кеширования
      */
     private void fillingData() {
         LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
-        String select = "SELECT id, name, in_stock, price, description, image FROM " + TABLE_NAME + " ORDER BY id DESC";
+        String select = "SELECT id, name, in_stock, price, description, image FROM item ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(
@@ -178,17 +192,4 @@ public class ItemDao implements InterfaceDao<Item> {
         ALL_ITEMS = result;
     }
 
-    /**
-     * @return количество элементов
-     */
-    public int getNumber() {
-        if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
-                    fillingData();
-                }
-            }
-        }
-        return ALL_ITEMS.size();
-    }
 }

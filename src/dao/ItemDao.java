@@ -109,9 +109,9 @@ public class ItemDao implements InterfaceDao<Item> {
      * @return id добавленного
      */
     @Override
-    public int create(final Item item) {
+    public Item create(final Item item) {
         ALL_ITEMS = null;
-        return 0;
+        return null;
     }
 
     /**

@@ -26,10 +26,9 @@ public class BillDaoTest {
     @Test
     public void testCreate() throws Exception {
         Bill bill = new Bill(1, true, 50);
-        int id = dao.create(bill);
-        Bill getBill = dao.getByOrderId(1);
-        assertTrue(bill.getOrderId() == getBill.getOrderId());
-        dao.delete(getBill.getId());
+        Bill newBill = dao.create(bill);
+        assertTrue(newBill.getOrderId() == bill.getOrderId());
+        dao.delete(newBill.getId());
     }
 
 
@@ -38,9 +37,9 @@ public class BillDaoTest {
         Bill bill = new Bill(1, true, 50);
 
         Collection<Bill> test1 = dao.get();
-        int id = dao.create(bill);
+        Bill newBill = dao.create(bill);
         Collection<Bill> test2 = dao.get();
-        dao.delete(id);
+        dao.delete(newBill.getId());
         Collection<Bill> test3 = dao.get();
 
         assertTrue(test1.size() == test3.size());

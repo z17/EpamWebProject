@@ -41,8 +41,8 @@ public class GroupDao implements InterfaceDao<Group> {
     }
 
     @Override
-    public int create(final Group item) {
-        return 0;
+    public Group create(final Group item) {
+        return null;
     }
 
     @Override

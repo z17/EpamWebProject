@@ -1,6 +1,7 @@
 package dao;
 
 import cp.ConnectionPool;
+import entity.Bill;
 import entity.Order;
 import entity.OrderItem;
 import entity.OrderStatus;
@@ -22,7 +23,21 @@ public class OrderDao implements InterfaceDao<Order> {
      */
     @Override
     public Collection<Order> get() {
-        return null;
+        String select = "SELECT id, user_id, price, status, time FROM `order`  ORDER BY id DESC";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        ArrayList<Order> result =  null;
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ){
+            result = getOrders(ps);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -66,9 +81,9 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return id заказа в БД
      */
     @Override
-    public int create(final Order item) {
+    public Order create(final Order item) {
         String insert = "INSERT INTO `order` (user_id, price, status, time) VALUES (?, ?, ?, ?)";
-        int newId = 0;
+        Order newOrder = null;
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
             PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
@@ -81,7 +96,8 @@ public class OrderDao implements InterfaceDao<Order> {
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    newId = rs.getInt(1);
+                    int newId = rs.getInt(1);
+                    newOrder = new Order(newId, item.getUserId(), item.getTime(), item.getPrice(), item.getStatus());
                 }
             }
 
@@ -89,7 +105,7 @@ public class OrderDao implements InterfaceDao<Order> {
             e.printStackTrace();
         }
 
-        return newId;
+        return newOrder;
     }
 
     /**
@@ -124,6 +140,13 @@ public class OrderDao implements InterfaceDao<Order> {
         // удаляем связи
         OrderItemDao dao = new OrderItemDao();
         dao.deleteByOrderId(id);
+
+        // удаляем счета
+        BillDao billDao = new BillDao();
+        Bill bill = billDao.getByOrderId(id);
+        if (bill != null) {
+            billDao.delete(bill.getId());
+        }
 
         // удаляем сам заказ
         String delete = "DELETE FROM `order` WHERE id = ?";

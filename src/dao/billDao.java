@@ -93,8 +93,8 @@ public class BillDao implements InterfaceDao<Bill> {
      * @return id нового счета
      */
     @Override
-    public int create(final Bill item) {
-        int newId = 0;
+    public Bill create(final Bill item) {
+        Bill newBill = null;
         String insert = "INSERT INTO bill (order_id, paid, sum) VALUES (?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -106,7 +106,8 @@ public class BillDao implements InterfaceDao<Bill> {
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    newId = rs.getInt(1);
+                    int newId = rs.getInt(1);
+                    newBill =  new Bill(newId, item.getOrderId(), item.isPaid(), item.getSum());
                 }
             }
 
@@ -114,7 +115,7 @@ public class BillDao implements InterfaceDao<Bill> {
             e.printStackTrace();
             LOG.error("connection error", e);
         }
-        return newId;
+        return newBill;
     }
 
     /**

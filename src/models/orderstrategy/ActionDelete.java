@@ -1,10 +1,12 @@
 package models.orderstrategy;
 
+import dao.BillDao;
 import dao.OrderDao;
+import entity.Bill;
 import entity.Order;
 
 /**
- * Удаление
+ * Удаление, сначала счетов, связанных с заказом, затем сам заказ
  */
 class ActionDelete implements Action {
     @Override

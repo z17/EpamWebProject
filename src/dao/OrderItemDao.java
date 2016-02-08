@@ -23,8 +23,8 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
     }
 
     @Override
-    public int create(OrderItem item) {
-        int newId = 0;
+    public OrderItem create(OrderItem item) {
+        OrderItem newOrderItem = null;
         String insert = "INSERT INTO order_item (order_id, item_id, count) VALUES (?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -36,14 +36,15 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    newId = rs.getInt(1);
+                    int newId = rs.getInt(1);
+                    newOrderItem = new OrderItem(newId, item.getIdOrder(), item.getIdItem(), item.getCount());
                 }
             }
 
         } catch (SQLException e) {
             LOG.error("connection error", e);
         }
-        return newId;
+        return newOrderItem;
     }
 
     @Override

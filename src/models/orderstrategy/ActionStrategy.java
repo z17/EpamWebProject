@@ -1,5 +1,6 @@
 package models.orderstrategy;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import entity.Order;
 import org.apache.log4j.Logger;
 
@@ -15,7 +16,7 @@ public class ActionStrategy {
      * Установка метода стратегии
      * @param actionName enum метода
      */
-    public void setAction(OrderAction actionName) {
+    public void setAction(@NonNull OrderAction actionName) {
         switch (actionName) {
             case ADD:
                 action = new ActionAdd();

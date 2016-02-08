@@ -83,8 +83,8 @@ public class UserDao implements InterfaceDao<User> {
      * @return id нового пользователя
      */
     @Override
-    public int create(final User item) {
-        int newId = 0;
+    public User create(final User item) {
+        User newUser = null;
         String insert = "INSERT INTO user (name, group_id, login, password) VALUES (?, ?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -97,14 +97,15 @@ public class UserDao implements InterfaceDao<User> {
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    newId = rs.getInt(1);
+                    int newId = rs.getInt(1);
+                    newUser = new User(newId, item.getName(), item.getGroup(), item.getLogin(), item.getPassword(), item.getEmail(), item.getPhone(), item.getAddress());
                 }
             }
 
         } catch (SQLException e) {
             LOG.error("connection error", e);
         }
-        return newId;
+        return newUser;
     }
 
     /**

@@ -12,7 +12,7 @@ public enum OrderStatus {
     NEW(1),
     EXECUTE(2),
     READY(3),
-    PAID(4);
+    CLOSE(4);
 
     private static final Logger LOG = Logger.getLogger(OrderStatus.class);
 

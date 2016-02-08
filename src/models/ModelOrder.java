@@ -143,7 +143,6 @@ public class ModelOrder {
      * @return возвращает изменённый заказ (или null в случае удаления)
      */
     public Order doAction(final String action, final User user, final Order order) {
-        System.out.println("do action");
         // корректность данных
         if (order == null) {
             return null;
@@ -154,7 +153,6 @@ public class ModelOrder {
             return order;
         }
 
-        // todo тесты, проверить что будет если неверная стратегия
         ActionStrategy strategy = new ActionStrategy();
         strategy.setAction(OrderAction.nameFromString(action));
         return strategy.doAction(order);

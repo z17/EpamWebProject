@@ -19,7 +19,7 @@ class ActionClose implements Action {
         billDao.update(bill);
 
         OrderDao orderDao = new OrderDao();
-        order.setStatus(OrderStatus.PAID);
+        order.setStatus(OrderStatus.CLOSE);
         orderDao.update(order);
         return order;
     }

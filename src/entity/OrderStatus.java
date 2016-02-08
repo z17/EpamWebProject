@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public enum OrderStatus {
     NEW(1),
-    EXECUTED(2),
+    EXECUTE(2),
     READY(3),
     PAID(4);
 

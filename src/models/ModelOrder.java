@@ -1,10 +1,13 @@
 package models;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import dao.BillDao;
 import dao.ItemDao;
 import dao.OrderDao;
 import dao.OrderItemDao;
 import entity.*;
+import models.orderstrategy.ActionStrategy;
+import models.orderstrategy.OrderAction;
 import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
@@ -15,10 +18,8 @@ import java.util.regex.Pattern;
 /**
  * Модель, отвечающая за работу с заказами
  */
-// todo: переделать ACTIONS на стратегию или что-то типа того.
 public class ModelOrder {
     private static final Logger LOG = Logger.getLogger(ModelOrder.class);
-    private static final String[] ACTIONS = {"executed", "delete", "ready", "close"};
 
     /**
      * Получает текущее состояние корзины
@@ -42,18 +43,18 @@ public class ModelOrder {
      * @param items его заказ вида элемент => количество
      */
     public void createOrder(final User user, final Map<Item, Integer> items) {
-        OrderDao orderDao = new OrderDao();
         int price = 0;
         LocalDateTime time = LocalDateTime.now();
         for (Map.Entry<Item, Integer> entry : items.entrySet()) {
             price += entry.getKey().getPrice() * entry.getValue();
         }
-        int orderId = orderDao.create(new Order(user.getId(), time, price, OrderStatus.NEW));
-
-        OrderItemDao orderItemDao = new OrderItemDao();
+        Order newOrder = new Order(user.getId(), time, price, OrderStatus.NEW);
         for (Map.Entry<Item, Integer> entry : items.entrySet()) {
-            orderItemDao.create(new OrderItem(orderId, entry.getKey().getId(), entry.getValue()));
+            newOrder.addItem(entry.getValue(), entry.getKey());
         }
+        ActionStrategy strategy = new ActionStrategy();
+        strategy.setAction(OrderAction.ADD);
+        strategy.doAction(newOrder);
     }
 
     /**
@@ -74,7 +75,7 @@ public class ModelOrder {
         OrderDao orderDao = new OrderDao();
         Collection<OrderStatus> listStatus = new ArrayList<>();
         listStatus.add(OrderStatus.NEW);
-        listStatus.add(OrderStatus.EXECUTED);
+        listStatus.add(OrderStatus.EXECUTE);
         listStatus.add(OrderStatus.READY);
         return orderDao.getOrderByStatusArray(listStatus);
     }
@@ -142,9 +143,10 @@ public class ModelOrder {
      * @return возвращает изменённый заказ (или null в случае удаления)
      */
     public Order doAction(final String action, final User user, final Order order) {
+        System.out.println("do action");
         // корректность данных
-        if (order == null || !isValidAction(action)) {
-            return order;
+        if (order == null) {
+            return null;
         }
 
         // доступ к выполнению функции
@@ -152,53 +154,10 @@ public class ModelOrder {
             return order;
         }
 
-        OrderDao dao = new OrderDao();
-        if (action.equals("delete")) {
-            dao.delete(order.getId());
-            return null;
-        }
-        if (action.equals("executed")) {
-            order.setStatus(OrderStatus.EXECUTED);
-        }
-        if (action.equals("ready")) {
-            createBill(order);
-            order.setStatus(OrderStatus.READY);
-        }
-        if (action.equals("close")) {
-            paidBill(order);
-            order.setStatus(OrderStatus.PAID);
-        }
-        dao.update(order);
-        return order;
-    }
-
-    /**
-     * Поменаем счёт оплаченным
-     * @param order заказ, для которого закрывает счёт
-     */
-    private void paidBill(final Order order) {
-        BillDao dao = new BillDao();
-        Bill bill = dao.getByOrderId(order.getId());
-        bill.setPaid(true);
-        dao.update(bill);
-    }
-
-    /**
-     * Создаём счет для заказа
-     * @param order заказ
-     */
-    private void createBill(final Order order) {
-        BillDao dao = new BillDao();
-        dao.create(new Bill(order.getId(), false, order.getPrice()));
-    }
-
-    /**
-     * Проверяем вадидность дейстия
-     * @param action действие
-     * @return true или false
-     */
-    private boolean isValidAction(final String action) {
-        return Arrays.asList(ACTIONS).contains(action);
+        // todo тесты, проверить что будет если неверная стратегия
+        ActionStrategy strategy = new ActionStrategy();
+        strategy.setAction(OrderAction.nameFromString(action));
+        return strategy.doAction(order);
     }
 
     /**
@@ -214,7 +173,7 @@ public class ModelOrder {
             return true;
         }
         // с выполнения на готово
-        if (order.getStatus() == OrderStatus.EXECUTED && action.equals("ready")) {
+        if (order.getStatus() == OrderStatus.EXECUTE && action.equals("ready")) {
             return true;
         }
         // с готово на закрыто

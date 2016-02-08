@@ -5,6 +5,7 @@ import entity.Bill;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -13,14 +14,37 @@ import java.util.Map;
  */
 public class BillDao implements InterfaceDao<Bill> {
     private static final Logger LOG = Logger.getLogger(BillDao.class);
-    private static String TABLE_NAME = "bill";
 
     /**
      * @return Список всеъ счетов
      */
     @Override
     public Collection<Bill> get() {
-        return null;
+        Collection<Bill> result = null;
+        String select = "SELECT id, order_id, paid, sum FROM bill";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        try (Connection connection = pool.takeConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     select,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             )
+        ){
+
+            try (ResultSet rs = ps.executeQuery()) {
+                result = new ArrayList<>();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    boolean paid = rs.getBoolean("paid");
+                    int sum = rs.getInt("sum");
+                    int orderId = rs.getInt("order_id");
+                    result.add(new Bill(id, orderId, paid, sum));
+                }
+            }
+        } catch (SQLException e) {
+            LOG.error("connection error", e);
+        }
+        return result;
     }
 
     /**
@@ -28,7 +52,7 @@ public class BillDao implements InterfaceDao<Bill> {
      * @return Счет
      */
     @Override
-    public Bill getById(int id) {
+    public Bill getById(final int id) {
         return null;
     }
 
@@ -37,8 +61,8 @@ public class BillDao implements InterfaceDao<Bill> {
      * @param orderId - id заказа
      * @return Счет или null
      */
-    public Bill getByOrderId(int orderId) {
-        String select = "SELECT id, order_id, paid, sum FROM " + TABLE_NAME + " WHERE order_id = ? LIMIT 1";
+    public Bill getByOrderId(final int orderId) {
+        String select = "SELECT id, order_id, paid, sum FROM bill WHERE order_id = ? LIMIT 1";
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(
@@ -69,9 +93,9 @@ public class BillDao implements InterfaceDao<Bill> {
      * @return id нового счета
      */
     @Override
-    public int create(Bill item) {
+    public int create(final Bill item) {
         int newId = 0;
-        String insert = "INSERT INTO " + TABLE_NAME + " (order_id, paid, sum) VALUES (?, ?, ?)";
+        String insert = "INSERT INTO bill (order_id, paid, sum) VALUES (?, ?, ?)";
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
             PreparedStatement ps = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)
@@ -87,6 +111,7 @@ public class BillDao implements InterfaceDao<Bill> {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             LOG.error("connection error", e);
         }
         return newId;
@@ -97,8 +122,8 @@ public class BillDao implements InterfaceDao<Bill> {
      * @param item - обновляемый счёт
      */
     @Override
-    public void update(Bill item) {
-        String update = "UPDATE "+TABLE_NAME+" set order_id = ?, paid = ?, sum = ? WHERE id = ?";
+    public void update(final Bill item) {
+        String update = "UPDATE bill set order_id = ?, paid = ?, sum = ? WHERE id = ?";
 
         ConnectionPool pool = ConnectionPool.getInstance();
         try(Connection connection = pool.takeConnection();
@@ -120,7 +145,18 @@ public class BillDao implements InterfaceDao<Bill> {
      * @param id счета
      */
     @Override
-    public void delete(int id) {
+    public void delete(final int id) {
+        // удаляем сам заказ
+        String delete = "DELETE FROM bill WHERE id = ?";
+        ConnectionPool pool = ConnectionPool.getInstance();
 
+        try(Connection connection = pool.takeConnection();
+            PreparedStatement ps = connection.prepareStatement(delete)
+        ) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

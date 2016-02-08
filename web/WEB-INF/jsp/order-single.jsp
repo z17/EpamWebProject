@@ -37,10 +37,10 @@
                     <form method="POST">
                         <c:choose>
                             <c:when test="${order.getStatus() == 'NEW'}">
-                                <button type="submit" name="action" value="executed"><lang:message text="order-single.send" /></button>
+                                <button type="submit" name="action" value="execute"><lang:message text="order-single.send" /></button>
                                 <button type="submit" name="action" value="delete"><lang:message text="order-single.delete" /></button>
                             </c:when>
-                            <c:when test="${order.getStatus() == 'EXECUTED'}">
+                            <c:when test="${order.getStatus() == 'EXECUTE'}">
                                 <button type="submit" name="action" value="ready"><lang:message text="order-single.make-bill" /></button>
                             </c:when>
                             <c:when test="${order.getStatus() == 'READY' }">

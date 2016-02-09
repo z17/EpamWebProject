@@ -62,7 +62,7 @@ public class ModelOrder {
      * @param user пользователь
      * @return список заказов
      */
-    public ArrayList<Order> getUserOrders(final User user) {
+    public List<Order> getUserOrders(final User user) {
         OrderDao orderDao = new OrderDao();
         return orderDao.getByUserId(user.getId());
     }
@@ -71,7 +71,7 @@ public class ModelOrder {
      * Получаем все активные заказы
      * @return список заказов
      */
-    public ArrayList<Order> getActiveOrders() {
+    public List<Order> getActiveOrders() {
         OrderDao orderDao = new OrderDao();
         Collection<OrderStatus> listStatus = new ArrayList<>();
         listStatus.add(OrderStatus.NEW);

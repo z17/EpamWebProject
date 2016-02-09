@@ -2,22 +2,22 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Group;
-import entity.Item;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class GroupDao implements InterfaceDao<Group> {
     private static final Logger LOG = Logger.getLogger(GroupDao.class);
     private static LinkedHashMap<Integer, Group> ALL_GROUPS = null;
 
     @Override
-    public Collection<Group> get() {
+    public List<Group> get() {
         if (ALL_GROUPS == null) {
             synchronized (GroupDao.class) {
                 if (ALL_GROUPS == null) {
@@ -25,7 +25,7 @@ public class GroupDao implements InterfaceDao<Group> {
                 }
             }
         }
-        return ALL_GROUPS.values();
+        return new ArrayList<>(ALL_GROUPS.values());
     }
 
     @Override

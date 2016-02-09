@@ -6,8 +6,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 /**
  * DAO для счетов
@@ -19,8 +18,8 @@ public class BillDao implements InterfaceDao<Bill> {
      * @return Список всеъ счетов
      */
     @Override
-    public Collection<Bill> get() {
-        Collection<Bill> result = null;
+    public List<Bill> get() {
+        List<Bill> result = null;
         String select = "SELECT id, order_id, paid, sum FROM bill";
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();

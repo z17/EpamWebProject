@@ -11,6 +11,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * DAO для заказов
@@ -22,10 +23,10 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return список заказов
      */
     @Override
-    public Collection<Order> get() {
+    public List<Order> get() {
         String select = "SELECT id, user_id, price, status, time FROM `order`  ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
-        ArrayList<Order> result =  null;
+        List<Order> result =  null;
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(
                      select,
@@ -65,7 +66,7 @@ public class OrderDao implements InterfaceDao<Order> {
              )
         ){
             ps.setInt(1, id);
-            ArrayList<Order> orders = getOrders(ps);
+            List<Order> orders = getOrders(ps);
             if (orders.size() > 0) {
                 result = orders.get(0);
             }
@@ -167,10 +168,10 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param id заказа
      * @return список заказов
      */
-    public ArrayList<Order> getByUserId(final int id) {
+    public List<Order> getByUserId(final int id) {
         String select = "SELECT id, user_id, price, status, time FROM `order` WHERE user_id = ? ORDER BY id DESC";
         ConnectionPool pool = ConnectionPool.getInstance();
-        ArrayList<Order> result =  null;
+        List<Order> result =  null;
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(
                      select,
@@ -191,14 +192,14 @@ public class OrderDao implements InterfaceDao<Order> {
      * @param listStatus колелкция статусов
      * @return список заказов
      */
-    public ArrayList<Order> getOrderByStatusArray(final Collection<OrderStatus> listStatus) {
+    public List<Order> getOrderByStatusArray(final Collection<OrderStatus> listStatus) {
         ArrayList<Integer> listStatusId = new ArrayList<>();
         listStatus.stream().forEach((item) -> listStatusId.add(item.getValue()));
         String statusStr = StringUtils.join(listStatusId, ", ");    // к сожалению mysql не поддерживает setArray и createArrayOf
         String select = "SELECT id, user_id, price, status, time FROM `order` WHERE status in ("+statusStr+") ORDER BY id DESC";
 
         ConnectionPool pool = ConnectionPool.getInstance();
-        ArrayList<Order> result =  null;
+        List<Order> result =  null;
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(
                      select,
@@ -219,8 +220,8 @@ public class OrderDao implements InterfaceDao<Order> {
      * @return массив заказов
      * @throws SQLException
      */
-    private ArrayList<Order> getOrders(final PreparedStatement ps) throws SQLException {
-        ArrayList<Order> result = new ArrayList<>();
+    private List<Order> getOrders(final PreparedStatement ps) throws SQLException {
+        List<Order> result = new ArrayList<>();
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int orderId = rs.getInt("id");
@@ -234,7 +235,7 @@ public class OrderDao implements InterfaceDao<Order> {
 
         for (Order one : result) {
             OrderItemDao dao = new OrderItemDao();
-            ArrayList<OrderItem> orderItems = dao.getByOrderId(one.getId());
+            List<OrderItem> orderItems = dao.getByOrderId(one.getId());
 
             ItemDao itemDao = new ItemDao();
             for (OrderItem currentOrderItem: orderItems) {

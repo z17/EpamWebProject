@@ -5,9 +5,8 @@ import entity.*;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class UserDao implements InterfaceDao<User> {
     private static final Logger LOG = Logger.getLogger(UserDao.class);
@@ -16,7 +15,7 @@ public class UserDao implements InterfaceDao<User> {
      * @return Списоз пользователей
      */
     @Override
-    public Collection<User> get() {
+    public List<User> get() {
         return null;
     }
 

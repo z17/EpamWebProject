@@ -13,14 +13,13 @@ public class ItemDao implements InterfaceDao<Item> {
 
     // кешируем т.к. item нам нужны постоянно.
     private static LinkedHashMap<Integer, Item> ALL_ITEMS = null;
-    private static String TABLE_NAME = "item";
 
     /**
      * Возвращает все элементы меню
      * @return collection
      */
     @Override
-    public Collection<Item> get() {
+    public List<Item> get() {
         if (ALL_ITEMS == null) {
             synchronized (ItemDao.class) {
                 if (ALL_ITEMS == null) {
@@ -28,7 +27,7 @@ public class ItemDao implements InterfaceDao<Item> {
                 }
             }
         }
-        return ALL_ITEMS.values();
+        return new ArrayList<>(ALL_ITEMS.values());
     }
 
     /**

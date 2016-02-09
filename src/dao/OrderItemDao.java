@@ -6,14 +6,13 @@ import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 public class OrderItemDao implements InterfaceDao<OrderItem> {
     private static final Logger LOG = Logger.getLogger(OrderItemDao.class);
 
     @Override
-    public Collection<OrderItem> get() {
+    public List<OrderItem> get() {
         return null;
     }
 
@@ -57,9 +56,9 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
 
     }
 
-    public ArrayList<OrderItem> getByOrderId(int orderId) {
+    public List<OrderItem> getByOrderId(int orderId) {
         String select = "SELECT id, item_id, count FROM order_item WHERE order_id = ?";
-        ArrayList<OrderItem> result = null;
+        List<OrderItem> result = null;
         ConnectionPool pool = ConnectionPool.getInstance();
         try (Connection connection = pool.takeConnection();
              PreparedStatement ps = connection.prepareStatement(

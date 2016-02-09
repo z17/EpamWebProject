@@ -7,6 +7,7 @@ import languages.Languages;
  */
 public interface Constants {
     String SESSION_LANGUAGE_PARAM = "language";
+    String SESSION_USER_PARAM = "user";
     String CONTENT_TYPE = "text/html";
     String CONTENT_ENCODING = "UTF-8";
     int DEFAULT_ITEMS_PER_PAGE = 5;

@@ -1,10 +1,9 @@
 package dao;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 public interface InterfaceDao<T> {
-    Collection <T> get();
+    List<T> get();
     T getById(final int id);
     T create(final T item);
     void update(final T item);

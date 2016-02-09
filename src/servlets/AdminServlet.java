@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Сервлет панели управления заказами
@@ -36,13 +37,13 @@ public class AdminServlet extends HttpServlet {
         ModelOrder model = new ModelOrder();
 
         HttpSession session = request.getSession(true);
-        User user = (User)session.getAttribute("user");
+        User user = (User)session.getAttribute(Constants.SESSION_USER_PARAM);
         if (!model.isAdminAccessAllowed(user)) {
             response.sendRedirect(Constants.PAGE_ERROR_ACCESS_URL);
             return;
         }
 
-        ArrayList<Order> ordersList = model.getActiveOrders();
+        List<Order> ordersList = model.getActiveOrders();
         request.setAttribute("ordersList", ordersList);
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/admin.jsp");

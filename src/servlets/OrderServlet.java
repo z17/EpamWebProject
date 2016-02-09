@@ -4,14 +4,13 @@ import entity.Item;
 import entity.Order;
 import entity.User;
 import models.ModelOrder;
-import models.ModelUser;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,7 +62,7 @@ public class OrderServlet extends HttpServlet {
         }
 
         if(currentUser != null) {
-            ArrayList<Order> ordersList = model.getUserOrders(currentUser);
+            List<Order> ordersList = model.getUserOrders(currentUser);
             request.setAttribute("ordersList", ordersList);
         }
 

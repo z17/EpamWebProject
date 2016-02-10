@@ -3,6 +3,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Item;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -21,11 +22,7 @@ public class ItemDao implements InterfaceDao<Item> {
     @Override
     public List<Item> get() {
         if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
                     fillingData();
-                }
-            }
         }
         return new ArrayList<>(ALL_ITEMS.values());
     }
@@ -38,11 +35,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     public ArrayList<Item> get(int start, int end) {
         if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
-                    fillingData();
-                }
-            }
+            fillingData();
         }
 
         ArrayList<Item> res = new ArrayList<>();
@@ -68,11 +61,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     public Collection<Item> getByArrayId(final Collection<Integer> ids) {
         if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
-                    fillingData();
-                }
-            }
+            fillingData();
         }
 
         Collection<Item> result = new ArrayList<>();
@@ -93,11 +82,7 @@ public class ItemDao implements InterfaceDao<Item> {
     @Override
     public Item getById(final int id) {
         if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
-                    fillingData();
-                }
-            }
+            fillingData();
         }
         return ALL_ITEMS.get(id);
     }
@@ -110,7 +95,7 @@ public class ItemDao implements InterfaceDao<Item> {
     @Override
     public Item create(final Item item) {
         ALL_ITEMS = null;
-        return null;
+        throw new NotImplementedException("");
     }
 
     /**
@@ -120,7 +105,7 @@ public class ItemDao implements InterfaceDao<Item> {
     @Override
     public void update(final Item item) {
         ALL_ITEMS = null;
-
+        throw new NotImplementedException("");
     }
 
     /**
@@ -130,7 +115,7 @@ public class ItemDao implements InterfaceDao<Item> {
     @Override
     public void delete(final int id) {
         ALL_ITEMS = null;
-
+        throw new NotImplementedException("");
     }
 
 
@@ -161,11 +146,7 @@ public class ItemDao implements InterfaceDao<Item> {
      */
     public int getNumber() {
         if (ALL_ITEMS == null) {
-            synchronized (ItemDao.class) {
-                if (ALL_ITEMS == null) {
-                    fillingData();
-                }
-            }
+            fillingData();
         }
         return ALL_ITEMS.size();
     }
@@ -174,21 +155,27 @@ public class ItemDao implements InterfaceDao<Item> {
      * Заполняем поле ALL_ITEMS данными из БД для кеширования
      */
     private void fillingData() {
-        LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
-        String select = "SELECT id, name, in_stock, price, description, image FROM item ORDER BY id DESC";
-        ConnectionPool pool = ConnectionPool.getInstance();
-        try (Connection connection = pool.takeConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     select,
-                     ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY
-             )
-        ) {
-            result = getItemsList(ps);
-        } catch (SQLException e) {
-            LOG.error("connection error", e);
+        if (ALL_ITEMS == null){
+            synchronized (ItemDao.class) {
+                if (ALL_ITEMS == null) {
+                    LinkedHashMap<Integer, Item> result = new LinkedHashMap<>();
+                    String select = "SELECT id, name, in_stock, price, description, image FROM item ORDER BY id DESC";
+                    ConnectionPool pool = ConnectionPool.getInstance();
+                    try (Connection connection = pool.takeConnection();
+                         PreparedStatement ps = connection.prepareStatement(
+                                 select,
+                                 ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                 ResultSet.CONCUR_READ_ONLY
+                         )
+                    ) {
+                        result = getItemsList(ps);
+                    } catch (SQLException e) {
+                        LOG.error("connection error", e);
+                    }
+                    ALL_ITEMS = result;
+                }
+            }
         }
-        ALL_ITEMS = result;
     }
 
 }

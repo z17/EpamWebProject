@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Bill;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -52,7 +53,7 @@ public class BillDao implements InterfaceDao<Bill> {
      */
     @Override
     public Bill getById(final int id) {
-        return null;
+        throw new NotImplementedException("");
     }
 
     /**

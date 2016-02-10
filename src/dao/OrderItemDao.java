@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.OrderItem;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -13,12 +14,12 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
 
     @Override
     public List<OrderItem> get() {
-        return null;
+        throw new NotImplementedException("");
     }
 
     @Override
     public OrderItem getById(final int id) {
-        return null;
+        throw new NotImplementedException("");
     }
 
     @Override
@@ -48,12 +49,12 @@ public class OrderItemDao implements InterfaceDao<OrderItem> {
 
     @Override
     public void update(final OrderItem item) {
-
+        throw new NotImplementedException("");
     }
 
     @Override
     public void delete(final int id) {
-
+        throw new NotImplementedException("");
     }
 
     public List<OrderItem> getByOrderId(int orderId) {

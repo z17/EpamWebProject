@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.Group;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -42,17 +43,17 @@ public class GroupDao implements InterfaceDao<Group> {
 
     @Override
     public Group create(final Group item) {
-        return null;
+        throw new NotImplementedException("");
     }
 
     @Override
     public void update(final Group item) {
-
+        throw new NotImplementedException("");
     }
 
     @Override
     public void delete(final int id) {
-
+        throw new NotImplementedException("");
     }
 
     private void fillingData() {

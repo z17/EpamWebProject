@@ -2,6 +2,7 @@ package dao;
 
 import cp.ConnectionPool;
 import entity.*;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -16,7 +17,7 @@ public class UserDao implements InterfaceDao<User> {
      */
     @Override
     public List<User> get() {
-        return null;
+        throw new NotImplementedException("");
     }
 
     /**
@@ -139,7 +140,7 @@ public class UserDao implements InterfaceDao<User> {
      */
     @Override
     public void delete(final int id) {
-
+        throw new NotImplementedException("");
     }
 
 

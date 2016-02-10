@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Статусы заказов
+ * Статусы заказов и их int представления в БД
  */
 public enum OrderStatus {
     NEW(1),

@@ -31,21 +31,13 @@ public class OrderSingleServlet extends HttpServlet {
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         ModelOrder model = new ModelOrder();
-        int orderId = model.getOrderIdFromUrl(request.getRequestURI());
-
+        Order order = model.getSingleOrder(request.getRequestURI());
         HttpSession session = request.getSession(true);
         User user = (User)session.getAttribute("user");
-
-        Order order = null;
-        if (orderId > 0) {
-            order = model.getOrderById(orderId);
-        }
-
         if (order == null) {
             response.sendRedirect(Constants.PAGE_ERROR_404_URL);
             return;
         }
-
         if (!model.isOrderAccessAllowed(order, user)) {
             response.sendRedirect(Constants.PAGE_ERROR_ACCESS_URL);
             return;
@@ -63,7 +55,6 @@ public class OrderSingleServlet extends HttpServlet {
         }
         request.setAttribute("order", order);
         request.setAttribute("displayActionForm", model.isAdminAccessAllowed(user));
-
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/order-single.jsp");
         requestDispatcher.forward(request, response);

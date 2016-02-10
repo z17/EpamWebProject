@@ -35,7 +35,6 @@ public class AdminServlet extends HttpServlet {
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         ModelOrder model = new ModelOrder();
-
         HttpSession session = request.getSession(true);
         User user = (User)session.getAttribute(Constants.SESSION_USER_PARAM);
         if (!model.isAdminAccessAllowed(user)) {

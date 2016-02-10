@@ -1,6 +1,5 @@
 package models;
 
-import cp.ConnectionPool;
 import dao.ItemDao;
 import entity.Item;
 import org.apache.log4j.Logger;

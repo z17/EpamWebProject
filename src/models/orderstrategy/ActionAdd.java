@@ -8,7 +8,7 @@ import entity.OrderItem;
 
 import java.util.Map;
 
-public class ActionAdd implements Action {
+class ActionAdd implements Action {
     @Override
     public Order action(final Order order) {
         OrderDao dao = new OrderDao();

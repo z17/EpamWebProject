@@ -2,7 +2,7 @@ package servlets;
 
 import entity.User;
 import models.ModelUser;
-import models.messages.UserMessages;
+import models.messages.StatusUserDataMessages;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -45,14 +45,14 @@ public class ProfileServlet extends HttpServlet {
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
             ModelUser model = new ModelUser();
-            ArrayList<UserMessages> messages = model.updateUserInfo(currentUser, name, email, phone, address);
+            ArrayList<StatusUserDataMessages> messages = model.updateUserInfo(currentUser, name, email, phone, address);
             request.setAttribute("messages", messages);
         } else if (submitPass != null) {
             String password = request.getParameter("password");
             String newPassword = request.getParameter("new-password");
             String confirmPassword = request.getParameter("confirm-password");
             ModelUser model = new ModelUser();
-            ArrayList<UserMessages> messages = model.updateUserPassword(currentUser, password, newPassword, confirmPassword);
+            ArrayList<StatusUserDataMessages> messages = model.updateUserPassword(currentUser, password, newPassword, confirmPassword);
             request.setAttribute("messages", messages);
         }
 

@@ -1,15 +1,13 @@
 package models;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-import dao.BillDao;
 import dao.ItemDao;
 import dao.OrderDao;
-import dao.OrderItemDao;
 import entity.*;
 import models.orderstrategy.ActionStrategy;
 import models.orderstrategy.OrderAction;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -23,19 +21,24 @@ public class ModelOrder {
 
     /**
      * Получает текущее состояние корзины
-     * @param orderCookieValue строка вида id[id элемента]=[количество]
+     * @param cookies строка вида id[id элемента]=[количество]
      * @return Ассоциативный массив элемент => количество
      */
-    public Map<Item, Integer> getCurrentOrder(final String orderCookieValue) {
-        HashMap<Integer, Integer> itemsId = parseOrderCookie(orderCookieValue);
-        ItemDao itemDao = new ItemDao();
-        Collection<Item> items = itemDao.getByArrayId(itemsId.keySet());
-        Map<Item, Integer> result = new HashMap<>();
-        for (Item item : items) {
-            result.put(item, itemsId.get(item.getId()));
+    public Map<Item, Integer> getCurrentOrder(final Cookie[] cookies) {
+        String orderCookieValue = getCookieValue(cookies);
+        if (orderCookieValue != null) {
+            HashMap<Integer, Integer> itemsId = parseOrderCookie(orderCookieValue);
+            ItemDao itemDao = new ItemDao();
+            Collection<Item> items = itemDao.getByArrayId(itemsId.keySet());
+            Map<Item, Integer> result = new HashMap<>();
+            for (Item item : items) {
+                result.put(item, itemsId.get(item.getId()));
+            }
+            return result;
         }
-        return result;
+        return null;
     }
+
 
     /**
      * Создаём заказ
@@ -78,36 +81,6 @@ public class ModelOrder {
         listStatus.add(OrderStatus.EXECUTE);
         listStatus.add(OrderStatus.READY);
         return orderDao.getOrderByStatusArray(listStatus);
-    }
-
-    /**
-     * Получаем id заказа из url или 0 если некорректный url
-     * @param requestURI url вида /order/[0-9]*
-     * @return id заказа или 0
-     */
-    public int getOrderIdFromUrl(final String requestURI) {
-        String[] path = requestURI.split("/");
-        if (path.length >= 3) {
-            if (path[1].equals("order")) {
-                try {
-                    return Integer.parseInt(path[2]);
-                } catch (NumberFormatException e) {
-                    LOG.warn("error format page number");
-                    return 0;
-                }
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Получаем заказ по id
-     * @param orderId id заказа
-     * @return заказ
-     */
-    public Order getOrderById(final int orderId) {
-        OrderDao dao = new OrderDao();
-        return dao.getById(orderId);
     }
 
     /**
@@ -159,6 +132,23 @@ public class ModelOrder {
     }
 
     /**
+     * Возвращает заказ по его адресу или null
+     * @param url адрес
+     * @return заказ
+     */
+    public Order getSingleOrder(String url) {
+        if (url == null) {
+            return null;
+        }
+        int orderId = getOrderIdFromUrl(url);
+        if (orderId == 0) {
+            return null;
+        }
+        Order order = getOrderById(orderId);
+        return order;
+    }
+
+    /**
      * Проверяем разрешено ли действие в текущем состоянии заказа
      * @param order заказ
      * @param action действие
@@ -202,4 +192,47 @@ public class ModelOrder {
         }
         return result;
     }
+
+    private String getCookieValue(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie current : cookies) {
+                if (current.getName().equals("order")) {
+                    return current.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Получаем id заказа из url или 0 если некорректный url
+     * @param requestURI url вида /order/[0-9]*
+     * @return id заказа или 0
+     *
+     */
+    private int getOrderIdFromUrl(final String requestURI) {
+        String[] path = requestURI.split("/");
+        if (path.length >= 3) {
+            if (path[1].equals("order")) {
+                try {
+                    return Integer.parseInt(path[2]);
+                } catch (NumberFormatException e) {
+                    LOG.warn("error format page number");
+                    return 0;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Получаем заказ по id
+     * @param orderId id заказа
+     * @return заказ
+     */
+    private Order getOrderById(final int orderId) {
+        OrderDao dao = new OrderDao();
+        return dao.getById(orderId);
+    }
+
 }

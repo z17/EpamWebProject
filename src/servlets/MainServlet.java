@@ -35,7 +35,6 @@ public class MainServlet extends HttpServlet{
         String url = request.getRequestURI();
         ModelItem model = new ModelItem();
 
-
         Collection<Item> menu = model.getMenu(url);
         request.setAttribute("menu", menu);
         if (menu == null) {

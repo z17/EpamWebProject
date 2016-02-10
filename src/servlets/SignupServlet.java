@@ -1,7 +1,7 @@
 package servlets;
 
 import models.ModelUser;
-import models.messages.UserMessages;
+import models.messages.StatusUserDataMessages;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,7 +36,7 @@ public class SignupServlet extends HttpServlet {
             String login = request.getParameter("login");
             String password = request.getParameter("password");
             ModelUser model = new ModelUser();
-            ArrayList<UserMessages> messages = model.createUser(name, login, password);
+            ArrayList<StatusUserDataMessages> messages = model.createUser(name, login, password);
             request.setAttribute("messages", messages);
         }
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/signup.jsp");

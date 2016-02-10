@@ -31,23 +31,9 @@ public class OrderServlet extends HttpServlet {
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         Cookie[] cookies = request.getCookies();
-        String orderStr = null;
-        Cookie orderCookie = null;
-        if (cookies != null) {
-            for (Cookie current : cookies) {
-                if (current.getName().equals("order")) {
-                    orderStr = current.getValue();
-                    orderCookie = current;
-                    break;
-                }
-            }
-        }
 
         ModelOrder model = new ModelOrder();
-        Map<Item, Integer> items = null;
-        if (orderStr != null) {
-            items = model.getCurrentOrder(orderStr);
-        }
+        Map<Item, Integer> items = model.getCurrentOrder(cookies);
 
         HttpSession session = request.getSession(true);
 
@@ -55,6 +41,9 @@ public class OrderServlet extends HttpServlet {
         User currentUser = (User)session.getAttribute("user");
         if (submit != null && items != null) {
             model.createOrder(currentUser, items);
+
+            // удаляем куку
+            Cookie orderCookie = new Cookie("order", "");
             orderCookie.setMaxAge(0);
             response.addCookie(orderCookie);
         } else {

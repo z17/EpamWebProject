@@ -1,6 +1,7 @@
 package servlets;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import settings.Constants;
 
 import javax.servlet.RequestDispatcher;
@@ -29,7 +30,9 @@ public class Error404Servlet extends HttpServlet{
     }
 
     private void processRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        LOG.warn("404 error");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("404 error " + request.getAttribute("javax.servlet.forward.request_uri"));
+        }
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error-404.jsp");
         requestDispatcher.forward(request, response);
     }

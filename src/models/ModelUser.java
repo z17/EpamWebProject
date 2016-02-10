@@ -4,10 +4,9 @@ import dao.GroupDao;
 import dao.UserDao;
 import entity.Group;
 import entity.User;
-import models.messages.UserMessages;
+import models.messages.StatusUserDataMessages;
 import org.apache.log4j.Logger;
 import settings.Constants;
-import settings.ProjectSetting;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -34,16 +33,16 @@ public class ModelUser {
      * @param password пароль
      * @return ошибки создания или CORRECT_SIGNUP
      */
-    public ArrayList<UserMessages> createUser(final String name, final String login, final String password) {
-        ArrayList<UserMessages> validate = validateSignupUserData(name, login, password);
-        if (validate.get(0) == UserMessages.CORRECT_SIGNUP) {
+    public ArrayList<StatusUserDataMessages> createUser(final String name, final String login, final String password) {
+        ArrayList<StatusUserDataMessages> validate = validateSignupUserData(name, login, password);
+        if (validate.get(0) == StatusUserDataMessages.CORRECT_SIGNUP) {
             String encodedPassword = encryptPassword(password);
             if (encodedPassword != null) {
                 User user = new User(name, DEFAULT_GROUP, login, encodedPassword);
                 UserDao dao = new UserDao();
                 dao.create(user);
             } else {
-                validate.add(UserMessages.UNKNOWN_ERROR);
+                validate.add(StatusUserDataMessages.UNKNOWN_ERROR);
             }
         }
 
@@ -83,13 +82,13 @@ public class ModelUser {
      * @param address Адрес
      * @return Ошибки обновления или CORRECT_UPDATE
      */
-    public ArrayList<UserMessages> updateUserInfo(final User user, final String name, final String email, final String phone, final String address) {
-        ArrayList<UserMessages> validate = new ArrayList<>();
+    public ArrayList<StatusUserDataMessages> updateUserInfo(final User user, final String name, final String email, final String phone, final String address) {
+        ArrayList<StatusUserDataMessages> validate = new ArrayList<>();
         if (user == null) {
-            validate.add(UserMessages.UNKNOWN_ERROR);
+            validate.add(StatusUserDataMessages.UNKNOWN_ERROR);
         }
         if (name == null || name.length() == 0) {
-            validate.add(UserMessages.EMPTY_NAME);
+            validate.add(StatusUserDataMessages.EMPTY_NAME);
         }
         if (validate.size() == 0) {
             UserDao dao = new UserDao();
@@ -98,7 +97,7 @@ public class ModelUser {
             user.setPhone(phone);
             user.setAddress(address);
             dao.update(user);
-            validate.add(UserMessages.CORRECT_UPDATE);
+            validate.add(StatusUserDataMessages.CORRECT_UPDATE);
         }
         return validate;
     }
@@ -111,21 +110,21 @@ public class ModelUser {
      * @param confirmPassword подтверждение пароля
      * @return ошибки пароля или CORRECT_UPDATE
      */
-    public ArrayList<UserMessages> updateUserPassword(final User user, final String password, final String newPassword, final String confirmPassword) {
-        ArrayList<UserMessages> validate = new ArrayList<>();
+    public ArrayList<StatusUserDataMessages> updateUserPassword(final User user, final String password, final String newPassword, final String confirmPassword) {
+        ArrayList<StatusUserDataMessages> validate = new ArrayList<>();
         if (user == null) {
-            validate.add(UserMessages.UNKNOWN_ERROR );
+            validate.add(StatusUserDataMessages.UNKNOWN_ERROR );
         } else {
             if (password == null || password.length() == 0) {
-                validate.add(UserMessages.EMPTY_PASSWORD);
+                validate.add(StatusUserDataMessages.EMPTY_PASSWORD);
             } else if (!verifyPassword(password, user.getPassword())) {
-                validate.add(UserMessages.PASSWORD_ERROR);
+                validate.add(StatusUserDataMessages.PASSWORD_ERROR);
             }
 
             if (!isValidPassword(newPassword)) {
-                validate.add(UserMessages.PASSWORD_INCORRECT);
+                validate.add(StatusUserDataMessages.PASSWORD_INCORRECT);
             } else if (!newPassword.equals(confirmPassword)) {
-                validate.add(UserMessages.PASSWORD_NOT_MATCH);
+                validate.add(StatusUserDataMessages.PASSWORD_NOT_MATCH);
             }
         }
 
@@ -135,12 +134,22 @@ public class ModelUser {
             if (newEncodedPassword != null) {
                 user.setPassword(newEncodedPassword);
                 dao.update(user);
-                validate.add(UserMessages.CORRECT_UPDATE);
+                validate.add(StatusUserDataMessages.CORRECT_UPDATE);
             } else {
-                validate.add(UserMessages.UNKNOWN_ERROR);
+                validate.add(StatusUserDataMessages.UNKNOWN_ERROR);
             }
         }
         return validate;
+    }
+
+    public User getUserFromUrl(final String url) {
+        int id = getUserIdFromUrl(url);
+        UserDao dao = new UserDao();
+        return dao.getById(id);
+    }
+
+    public boolean isUserAccessToProfiles(final User user) {
+        return user.isAdminAccess();
     }
 
     /**
@@ -150,29 +159,29 @@ public class ModelUser {
      * @param password пароль
      * @return сообщения об ошибке или CORRECT_SIGNUP
      */
-    private ArrayList<UserMessages> validateSignupUserData(final String name, final String login, final String password) {
-        ArrayList<UserMessages> validate = new ArrayList<>();
+    private ArrayList<StatusUserDataMessages> validateSignupUserData(final String name, final String login, final String password) {
+        ArrayList<StatusUserDataMessages> validate = new ArrayList<>();
 
         if (name == null || name.length() == 0) {
-            validate.add(UserMessages.EMPTY_NAME);
+            validate.add(StatusUserDataMessages.EMPTY_NAME);
         }
         if (login == null || login.length() == 0) {
-            validate.add(UserMessages.EMPTY_LOGIN);
+            validate.add(StatusUserDataMessages.EMPTY_LOGIN);
         }
         if (password == null || password.length() == 0) {
-            validate.add(UserMessages.EMPTY_PASSWORD);
+            validate.add(StatusUserDataMessages.EMPTY_PASSWORD);
         } else if (!isValidPassword(password)) {
-            validate.add(UserMessages.PASSWORD_INCORRECT);
+            validate.add(StatusUserDataMessages.PASSWORD_INCORRECT);
         }
 
         UserDao dao = new UserDao();
         User findLogin = dao.getByLogin(login);
         if (findLogin != null) {
-            validate.add(UserMessages.LOGIN_EXIST);
+            validate.add(StatusUserDataMessages.LOGIN_EXIST);
         }
 
         if (validate.size() == 0) {
-            validate.add(UserMessages.CORRECT_SIGNUP);
+            validate.add(StatusUserDataMessages.CORRECT_SIGNUP);
         }
 
         return validate;
@@ -222,7 +231,12 @@ public class ModelUser {
         return encodedPassword.equals(encryptPassword(password));
     }
 
-    public int getUserIdFromUrl(final String url) {
+    /**
+     * Получает id пользователя из строки адреса
+     * @param url адрес
+     * @return id пользователя
+     */
+    private int getUserIdFromUrl(final String url) {
         String[] path = url.split("/");
         if (path.length >= 3) {
             if (path[1].equals("user")) {
@@ -235,17 +249,6 @@ public class ModelUser {
             }
         }
         return 0;
-
-
     }
 
-    public User getUserFromUrl(final String url) {
-        int id = getUserIdFromUrl(url);
-        UserDao dao = new UserDao();
-        return dao.getById(id);
-    }
-
-    public boolean isUserAccessToProfiles(final User user) {
-        return user.isAdminAccess();
-    }
 }
